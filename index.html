@@ -118,25 +118,97 @@
   .route-line{color:var(--brand2);font-weight:600;font-size:13px;margin-bottom:6px}
   .route-step{display:flex;gap:8px;font-size:13px;margin:4px 0}
   .route-step strong{color:#9a6412;white-space:nowrap}
+  .hero-cover{position:relative;min-height:570px;display:flex;align-items:stretch;overflow:hidden;background:linear-gradient(90deg,rgba(255,253,247,.94) 0%,rgba(255,253,247,.82) 42%,rgba(255,253,247,.08) 75%),url('assets/holiday-table.jpg') center/cover;border:1px solid rgba(107,74,47,.12);box-shadow:0 18px 45px rgba(74,56,35,.16);padding:32px;margin-bottom:18px}
+  .hero-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:min(47%,480px);padding:20px 0 24px}
+  .hero-kicker{color:#a15a2b;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+  .hero-cover h1{margin:10px 0 12px;color:#3b281d;font-family:Georgia,"STKaiti","KaiTi",serif;font-size:clamp(30px,5vw,62px);line-height:1.03;letter-spacing:0}
+  .hero-copy p{max-width:420px;color:#644f40;font-size:15px;line-height:1.8;margin:0}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .hero-btn,.hero-ghost{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 16px;font-size:13px;text-decoration:none;cursor:pointer;border:1px solid rgba(93,59,35,.22)}
+  .hero-btn{background:#b85b32;color:#fff;border-color:#b85b32;box-shadow:0 8px 18px rgba(184,91,50,.2)}
+  .hero-ghost{background:rgba(255,255,255,.62);color:#533a2b}
+  .hero-btn:hover,.hero-ghost:hover{transform:translateY(-1px)}
+  .hero-note{margin-top:28px;padding:10px 13px;border-left:3px solid #c69262;color:#745845;background:rgba(255,252,244,.66);font-size:12px}
+  .hero-map-card{position:absolute;z-index:2;right:26px;bottom:26px;width:min(50%,520px);padding:14px 16px 16px;background:rgba(255,252,244,.85);border:1px solid rgba(108,76,48,.2);border-radius:16px;backdrop-filter:blur(10px);box-shadow:0 12px 30px rgba(69,49,33,.14)}
+  .map-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;color:#5f4433}
+  .map-card-top strong{font-size:14px}
+  .map-status{font-size:11px;color:#9a6b4a;text-align:right}
+  .map-shell{position:relative;min-height:245px;border-radius:12px;overflow:hidden;background:linear-gradient(145deg,#edf4f0,#f7f0df);border:1px solid rgba(80,118,105,.16)}
+  .china-map{display:block;width:100%;height:auto;min-height:245px}
+  .china-outline{fill:#d8e9df;stroke:#5c907b;stroke-width:3;stroke-linejoin:round}
+  .china-island{fill:#d8e9df;stroke:#5c907b;stroke-width:2}
+  .map-route{fill:none;stroke:#c45f36;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:7 7;opacity:.75;transition:d .35s ease}
+  .map-pin{cursor:pointer;outline:none}
+  .map-pin circle:first-child{fill:#fffaf2;stroke:#ad6948;stroke-width:2;transition:all .2s ease}
+  .map-pin circle:last-child{fill:#c45f36;transition:all .2s ease}
+  .map-pin text{fill:#4d382b;font-size:12px;font-weight:700;paint-order:stroke;stroke:#fffaf2;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+  .map-pin:hover circle:first-child,.map-pin.selected circle:first-child{fill:#fff0df;stroke:#b84f2b;stroke-width:3}
+  .map-pin:hover circle:last-child,.map-pin.selected circle:last-child{fill:#b84f2b;r:6}
+  .map-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;color:#7a624e;font-size:11px}
+  .map-legend span{display:inline-flex;align-items:center;gap:4px}
+  .map-dot{width:7px;height:7px;border-radius:50%;background:#c45f36;display:inline-block}
+  .map-dot.start{background:#4d8a74}
+  .quick-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 16px;padding:12px 16px;background:#314e46;color:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(49,78,70,.16)}
+  .quick-strip strong{font-size:14px}
+  .quick-strip span{font-size:12px;opacity:.8}
+  .quick-strip a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.5);font-size:12px}
+  .toc a{transition:all .2s ease}
+  .toc a:hover{transform:translateY(-1px);border-color:#c78a62;color:#a54f2a}
+  .panel,.bar,.search-box,section.city{box-shadow:0 10px 26px rgba(79,61,40,.06)}
+  section.city{transition:transform .2s ease,box-shadow .2s ease}
+  section.city:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(79,61,40,.1)}
+  .btn,.seg,.opt{transition:transform .18s ease,background .18s ease,border-color .18s ease}
+  .btn:hover,.seg:hover,.opt:hover{transform:translateY(-1px);border-color:#c78a62}
+  .btn.primary{box-shadow:0 6px 14px rgba(200,84,47,.18)}
+  @media (max-width:760px){
+    .hero-cover{min-height:760px;padding:22px 18px;background:linear-gradient(180deg,rgba(255,253,247,.95) 0%,rgba(255,253,247,.84) 48%,rgba(255,253,247,.08) 100%),url('assets/holiday-table.jpg') 68% center/cover}
+    .hero-copy{width:100%;justify-content:flex-start;padding-top:26px}
+    .hero-cover h1{font-size:42px}
+    .hero-map-card{right:14px;bottom:14px;left:14px;width:auto}
+    .map-shell,.china-map{min-height:220px}
+  }
   .foot{text-align:center;color:var(--muted);font-size:12px;padding:16px 0 0}
   @media print{
     nav.toc,.search-box,.actions,.filters,.controls,.c-head,.btn,.mv,header.hero .chips{display:none !important}
     .city{display:none} .city.picked{display:block}
     body{background:#fff}
   }
-  @media (max-width:560px){ header.hero h1{font-size:19px} }
+  @media (max-width:560px){ header.hero h1{font-size:19px} .hero-cover h1{font-size:40px} }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="hero">
-    <h1>余杭出发 · 假期当天往返手册</h1>
-    <p>出发地：杭州市余杭区（地铁 19 号线串杭州西 / 杭州东）· 晚上回家睡，学生党版</p>
-    <p>选几座城就排几天；假期没排满的天用杭州本地日补上。日期可选中秋 / 国庆 / 元旦等，也能自定义。</p>
-    <div class="chips">
-      <span class="chip" id="dateChip">10/1 — 10/7</span>
-      <span class="chip">带学生证</span>
-      <span class="chip">单文件 · 可离线看行程</span>
+  <header class="hero hero-cover">
+    <div class="hero-copy">
+      <span class="hero-kicker">Holiday route studio</span>
+      <h1>余杭出发<br>去江南吃一圈</h1>
+      <p>把高铁当天往返、预约景点和糯叽叽美食，排成一份真的能出发的假期计划。</p>
+      <div class="hero-actions">
+        <a class="hero-btn" href="#pick">开始选城市 <span aria-hidden="true">→</span></a>
+        <a class="hero-ghost" href="#plan">查看我的路线</a>
+      </div>
+      <div class="hero-note"><b id="dateChip">国庆 10/1 — 10/7</b><br>当天去、当天回，晚上回余杭睡。</div>
+    </div>
+    <div class="hero-map-card">
+      <div class="map-card-top"><strong>点地图选城</strong><span class="map-status" id="mapStatus">点击城市标记加入计划</span></div>
+      <div class="map-shell">
+        <svg class="china-map" viewBox="0 0 620 430" role="img" aria-label="华东旅行互动地图">
+          <path class="china-outline" d="M94 111 125 83 166 77 198 58 237 64 270 47 307 58 339 43 373 55 407 50 435 67 476 71 493 89 531 94 550 119 536 141 557 160 543 182 518 194 526 218 509 239 500 267 477 277 467 305 448 324 433 355 406 349 385 328 355 327 331 315 302 319 276 304 248 302 228 285 199 281 181 263 158 252 161 230 139 214 126 190 104 175 112 149 86 132Z"></path>
+          <path class="china-island" d="M477 345 490 356 486 374 474 384 466 373 469 356Z"></path>
+          <path class="china-island" d="M527 326 537 329 541 337 533 342 525 337Z"></path>
+          <path id="mapRoute" class="map-route" d=""></path>
+          <g class="map-pin" data-map-city="nj" transform="translate(356 235)" role="button" tabindex="0" aria-label="选择南京"><circle r="10"></circle><circle r="4"></circle><text x="-18" y="-13">南京</text></g>
+          <g class="map-pin" data-map-city="yz" transform="translate(403 196)" role="button" tabindex="0" aria-label="选择扬州"><circle r="10"></circle><circle r="4"></circle><text x="-18" y="-13">扬州</text></g>
+          <g class="map-pin" data-map-city="wx" transform="translate(422 238)" role="button" tabindex="0" aria-label="选择无锡"><circle r="10"></circle><circle r="4"></circle><text x="-18" y="-13">无锡</text></g>
+          <g class="map-pin" data-map-city="sz" transform="translate(446 255)" role="button" tabindex="0" aria-label="选择苏州"><circle r="10"></circle><circle r="4"></circle><text x="-18" y="-13">苏州</text></g>
+          <g class="map-pin" data-map-city="sh" transform="translate(483 241)" role="button" tabindex="0" aria-label="选择上海"><circle r="10"></circle><circle r="4"></circle><text x="10" y="4">上海</text></g>
+          <g class="map-pin" data-map-city="nx" transform="translate(415 280)" role="button" tabindex="0" aria-label="选择湖州南浔"><circle r="10"></circle><circle r="4"></circle><text x="-32" y="-13">南浔</text></g>
+          <g class="map-pin" data-map-city="sx" transform="translate(451 290)" role="button" tabindex="0" aria-label="选择绍兴"><circle r="10"></circle><circle r="4"></circle><text x="10" y="4">绍兴</text></g>
+          <g class="map-pin" data-map-city="hz" transform="translate(430 311)" role="button" tabindex="0" aria-label="选择杭州"><circle r="11"></circle><circle r="5"></circle><text x="10" y="4">杭州</text></g>
+          <g class="map-pin" data-map-city="lh" transform="translate(447 360)" role="button" tabindex="0" aria-label="选择台州临海"><circle r="10"></circle><circle r="4"></circle><text x="10" y="4">临海</text></g>
+        </svg>
+      </div>
+      <div class="map-legend"><span><i class="map-dot start"></i>余杭出发</span><span><i class="map-dot"></i>点击选城</span><span>线条会跟着选择变化</span></div>
     </div>
   </header>
 
@@ -147,6 +219,8 @@
     <a href="#eats">便宜美食</a>
     <a href="#memo">出行备忘</a>
   </nav>
+
+  <div class="quick-strip"><div><strong>华东当天往返小环线</strong><span> 从余杭出发，选城市、圈预约、再生成路线</span></div><a href="#reserve">先看预约景点 →</a></div>
 
   <div class="search-box">
     <label>去网页搜好吃的（打开小红书 / 点评 / 高德）</label>
@@ -659,6 +733,10 @@ var planSlots = [];
 var lastLeftover = [];
 var cityFilter = 'all';
 var openCity = {};
+var MAP_POINTS = {
+  hz:{x:430,y:311}, sx:{x:451,y:290}, sh:{x:483,y:241}, sz:{x:446,y:255},
+  nx:{x:415,y:280}, lh:{x:447,y:360}, nj:{x:356,y:235}, wx:{x:422,y:238}, yz:{x:403,y:196}
+};
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function star(n){ var s=''; for(var i=0;i<5;i++) s += i<n?'★':'☆'; return s; }
@@ -688,6 +766,26 @@ function reservationsFor(cityId){ return RESERVATIONS.filter(function(r){ return
 function reservationSelected(id){ return reservationPicked.indexOf(id)>=0; }
 function reservationNames(cityId){
   return reservationsFor(cityId).filter(function(r){ return reservationSelected(r.id); }).map(function(r){ return r.name; });
+}
+function syncMap(){
+  var pins=document.querySelectorAll('[data-map-city]');
+  var selected=picked.filter(function(id){ return MAP_POINTS[id]; });
+  for(var i=0;i<pins.length;i++) pins[i].classList.toggle('selected', selected.indexOf(pins[i].getAttribute('data-map-city'))>=0);
+  var status=document.getElementById('mapStatus');
+  if(status) status.textContent=selected.length ? '已选 '+selected.length+' 座 · 再点可取消' : '点击城市标记加入计划';
+  var route=document.getElementById('mapRoute');
+  if(!route) return;
+  if(!selected.length){ route.setAttribute('d',''); return; }
+  var ids=['hz'];
+  for(var j=0;j<selected.length;j++) if(ids.indexOf(selected[j])<0) ids.push(selected[j]);
+  if(ids[ids.length-1]!=='hz') ids.push('hz');
+  var d='';
+  for(var k=0;k<ids.length;k++){
+    var p=MAP_POINTS[ids[k]];
+    if(!p) continue;
+    d+=(d?' L':'M')+p.x+' '+p.y;
+  }
+  route.setAttribute('d',d);
 }
 function holById(id){ for(var i=0;i<HOLIDAYS.length;i++) if(HOLIDAYS[i].id===id) return HOLIDAYS[i]; return null; }
 function dateAt(i){
@@ -1105,6 +1203,7 @@ function refresh(){
   renderFoods();
   renderChip();
   renderSale();
+  syncMap();
 }
 
 function openSearch(kind){
@@ -1254,6 +1353,11 @@ document.getElementById('btnPrint').onclick=function(){ window.print(); };
 document.getElementById('btnXhs').onclick=function(){ openSearch('xhs'); };
 document.getElementById('btnDp').onclick=function(){ openSearch('dp'); };
 document.getElementById('btnGd').onclick=function(){ openSearch('gd'); };
+document.querySelectorAll('[data-map-city]').forEach(function(pin){
+  function choose(){ toggle(pin.getAttribute('data-map-city')); }
+  pin.addEventListener('click', choose);
+  pin.addEventListener('keydown', function(e){ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); choose(); } });
+});
 document.getElementById('startDate').value=tripStart;
 refresh();
 </script>
