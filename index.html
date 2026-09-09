@@ -93,6 +93,31 @@
   th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
   .food-card{display:grid;gap:8px}
   .food-item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+  .reserve-inline{margin-top:14px;padding:11px 12px;background:#fff8ea;border:1px solid #ecd7ab;border-radius:10px}
+  .reserve-inline h4{margin:0 0 7px;color:#9a6412}
+  .reserve-list{display:grid;gap:8px}
+  .reserve-item{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:#fff;cursor:pointer}
+  .reserve-item:hover{border-color:#d7b26b}
+  .reserve-item.selected{border-color:var(--gold);background:#fff9ed}
+  .circle-check{width:20px;height:20px;border:2px solid #d8c59d;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;color:#fff;font-size:12px;line-height:1;margin-top:1px}
+  .reserve-item.selected .circle-check{background:var(--gold);border-color:var(--gold)}
+  .reserve-copy{min-width:0;flex:1}
+  .reserve-copy b{font-size:13px}
+  .reserve-copy .a{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+  .reserve-copy .t{display:block;color:#7a5216;font-size:12px;margin-top:3px}
+  .reserve-panel{background:#fffdf8;border:1px solid #ecd7ab;border-radius:14px;padding:16px;margin:18px 0}
+  .reserve-panel h2{margin:0 0 5px;font-size:18px;color:#805317}
+  .reserve-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0 12px}
+  .reserve-count{color:#805317;font-size:13px}
+  .reserve-group{border-top:1px dashed #ead8b4;padding-top:12px;margin-top:12px}
+  .reserve-group:first-child{border-top:0;padding-top:0;margin-top:0}
+  .reserve-group h3{margin:0 0 8px;font-size:15px}
+  .route-result{margin-top:14px;padding-top:14px;border-top:1px solid #ecd7ab}
+  .route-result h3{margin:0 0 8px;font-size:16px;color:#805317}
+  .route-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px}
+  .route-line{color:var(--brand2);font-weight:600;font-size:13px;margin-bottom:6px}
+  .route-step{display:flex;gap:8px;font-size:13px;margin:4px 0}
+  .route-step strong{color:#9a6412;white-space:nowrap}
   .foot{text-align:center;color:var(--muted);font-size:12px;padding:16px 0 0}
   @media print{
     nav.toc,.search-box,.actions,.filters,.controls,.c-head,.btn,.mv,header.hero .chips{display:none !important}
@@ -117,6 +142,7 @@
 
   <nav class="toc">
     <a href="#pick">选城</a>
+    <a href="#reserve">预约景点</a>
     <a href="#plan">行程</a>
     <a href="#eats">便宜美食</a>
     <a href="#memo">出行备忘</a>
@@ -176,6 +202,17 @@
 
   <div class="filters" id="cityFilters"></div>
   <div id="list"></div>
+
+  <section class="reserve-panel" id="reserve">
+    <h2>预约景点清单</h2>
+    <p class="empty">把想去的预约景点圈出来，系统会按当地游览顺序生成路线；选中预约景点时会自动加入对应城市。</p>
+    <div class="reserve-toolbar">
+      <span class="reserve-count" id="reserveCount">已选 0 个预约景点</span>
+      <button class="btn primary" id="btnReserveRoute" type="button">生成预约路线</button>
+    </div>
+    <div class="reserve-list" id="reserveBoard"></div>
+    <div class="route-result" id="reserveRoute"></div>
+  </section>
 
   <section class="panel" id="plan">
     <h2>行程时间轴</h2>
@@ -591,8 +628,22 @@ var CITIES = [
   }
 ];
 
+var RESERVATIONS = [
+  {id:'hz-liangzhu', city:'hz', name:'良渚古城遗址公园', kind:'预约/购票', detail:'标准票约 60 元，学生价约 30 元', window:'建议提前预约，16:00 停检', duration:'建议 3 小时', route:'杭州西 / 余杭 → 良渚古城遗址公园'},
+  {id:'hz-lingyin', city:'hz', name:'灵隐飞来峰', kind:'实名预约', detail:'免票，需在“杭州灵隐飞来峰”小程序预约', window:'建议抢 7:30 场', duration:'建议 2.5 小时', route:'地铁 + 接驳公交 → 灵隐飞来峰'},
+  {id:'sx-luxun', city:'sx', name:'鲁迅故里', kind:'免费预约', detail:'免费实名预约，现场按预约时段入园', window:'建议上午先去', duration:'建议 2 小时', route:'绍兴北 → 鲁迅故里'},
+  {id:'sh-museum', city:'sh', name:'上海博物馆', kind:'免费预约', detail:'免费参观，需提前预约入馆', window:'国庆名额紧张，提前看放票', duration:'建议 2—2.5 小时', route:'上海虹桥 → 地铁 2 号线 → 上海博物馆'},
+  {id:'sz-zhuozheng', city:'sz', name:'拙政园', kind:'分时预约/购票', detail:'旺季约 70—90 元，学生票以官方页面为准', window:'建议预约开园早场', duration:'建议 2.5 小时', route:'苏州站 → 拙政园'},
+  {id:'sz-museum', city:'sz', name:'苏州博物馆', kind:'免费预约', detail:'免费参观，需提前预约', window:'通常提前 7 天每天 8:00 放票', duration:'建议 1.5 小时', route:'拙政园 → 苏州博物馆'},
+  {id:'nj-zhongshan', city:'nj', name:'中山陵', kind:'免费预约', detail:'免费实名预约，按预约时段入园', window:'每日 16:00 放票，提前蹲点', duration:'建议 2.5 小时', route:'南京南 → 地铁/接驳 → 中山陵'},
+  {id:'nj-museum', city:'nj', name:'南京博物院', kind:'免费预约', detail:'免费参观，需预约入馆', window:'节假日名额紧张，提前看票', duration:'建议 2.5 小时', route:'中山陵 / 市区 → 南京博物院'},
+  {id:'wx-yuantouzhu', city:'wx', name:'鼋头渚', kind:'提前购票', detail:'景区票价以官方页面为准，学生优惠以现场为准', window:'建议提前买票，留足园内交通时间', duration:'建议 3 小时', route:'无锡站 → 鼋头渚'}
+];
+
 var picked = [];
 try { picked = JSON.parse(localStorage.getItem('tripPicked') || '[]'); } catch(e){ picked = []; }
+var reservationPicked = [];
+try { reservationPicked = JSON.parse(localStorage.getItem('reservationPicked') || '[]'); } catch(e){ reservationPicked = []; }
 var tripStart = '2026-10-01', fillDays = 7, curHol = 'gq';
 try {
   var st = JSON.parse(localStorage.getItem('tripState') || '{}');
@@ -630,7 +681,14 @@ function cheapFoods(c, n){
 }
 
 function savePicked(){ try{ localStorage.setItem('tripPicked', JSON.stringify(picked)); }catch(e){} }
+function saveReservations(){ try{ localStorage.setItem('reservationPicked', JSON.stringify(reservationPicked)); }catch(e){} }
 function saveState(){ try{ localStorage.setItem('tripState', JSON.stringify({ start:tripStart, fillDays:fillDays, hol:curHol, stu:document.getElementById('stuTicket').checked })); }catch(e){} }
+function reservation(id){ for(var i=0;i<RESERVATIONS.length;i++) if(RESERVATIONS[i].id===id) return RESERVATIONS[i]; return null; }
+function reservationsFor(cityId){ return RESERVATIONS.filter(function(r){ return r.city===cityId; }); }
+function reservationSelected(id){ return reservationPicked.indexOf(id)>=0; }
+function reservationNames(cityId){
+  return reservationsFor(cityId).filter(function(r){ return reservationSelected(r.id); }).map(function(r){ return r.name; });
+}
 function holById(id){ for(var i=0;i<HOLIDAYS.length;i++) if(HOLIDAYS[i].id===id) return HOLIDAYS[i]; return null; }
 function dateAt(i){
   var d = new Date(tripStart + 'T00:00:00');
@@ -707,6 +765,20 @@ function cityPassFilter(c){
   return true;
 }
 
+function reservationMarkup(cityId){
+  var rs=reservationsFor(cityId);
+  if(!rs.length) return '';
+  var h='<div class="reserve-inline"><h4>当地预约景点</h4><div class="reserve-list">';
+  for(var i=0;i<rs.length;i++){
+    var r=rs[i], on=reservationSelected(r.id);
+    h+='<div class="reserve-item'+(on?' selected':'')+'" data-reserve="'+r.id+'">';
+    h+='<span class="circle-check">'+(on?'✓':'')+'</span><span class="reserve-copy">';
+    h+='<b>'+esc(r.name)+'</b><span class="a">'+esc(r.kind)+' · '+esc(r.detail)+'</span>';
+    h+='<span class="t">'+esc(r.window)+' · '+esc(r.duration)+'</span></span></div>';
+  }
+  return h+'</div></div>';
+}
+
 function renderList(){
   var h='';
   for(var i=0;i<CITIES.length;i++){
@@ -729,7 +801,7 @@ function renderList(){
       var sp=c.spots[j];
       h += '<li><span class="n">'+esc(sp[0])+'</span> <span class="a">· '+esc(sp[1])+'</span>'+(sp[2]?' <span class="t">('+esc(sp[2])+')</span>':'')+'</li>';
     }
-    h += '</ul><h4>便宜好吃</h4><ul>';
+    h += '</ul>'+reservationMarkup(c.id)+'<h4>便宜好吃</h4><ul>';
     for(var k=0;k<c.foods.length;k++){
       var f=c.foods[k];
       h += '<li><span class="n">'+esc(f.n)+'</span> <span class="a">'+esc(f.a)+'</span> <span class="t">'+esc(f.price)+' — '+esc(f.why)+'</span> ';
@@ -947,9 +1019,77 @@ function renderFoods(){
   document.getElementById('foodBoard').innerHTML = h || '<p class="empty">没有符合筛选的店。</p>';
 }
 
+function renderReservations(){
+  var cityIds=[];
+  for(var i=0;i<picked.length;i++) if(reservationsFor(picked[i]).length && cityIds.indexOf(picked[i])<0) cityIds.push(picked[i]);
+  for(var j=0;j<RESERVATIONS.length;j++) if(cityIds.indexOf(RESERVATIONS[j].city)<0) cityIds.push(RESERVATIONS[j].city);
+  var h='';
+  for(var k=0;k<cityIds.length;k++){
+    var c=city(cityIds[k]), rs=reservationsFor(cityIds[k]);
+    if(!c || !rs.length) continue;
+    h+='<div class="reserve-group"><h3>'+c.emoji+' '+esc(c.name)+'</h3><div class="reserve-list">';
+    for(var n=0;n<rs.length;n++){
+      var r=rs[n], on=reservationSelected(r.id);
+      h+='<div class="reserve-item'+(on?' selected':'')+'" data-reserve="'+r.id+'">';
+      h+='<span class="circle-check">'+(on?'✓':'')+'</span><span class="reserve-copy">';
+      h+='<b>'+esc(r.name)+'</b><span class="a">'+esc(r.kind)+' · '+esc(r.detail)+'</span>';
+      h+='<span class="t">'+esc(r.window)+' · '+esc(r.duration)+'</span></span></div>';
+    }
+    h+='</div></div>';
+  }
+  document.getElementById('reserveBoard').innerHTML=h || '<p class="empty">当前没有可预约景点。</p>';
+  document.getElementById('reserveCount').textContent='已选 '+reservationPicked.length+' 个预约景点';
+}
+
+function renderReservationRoute(){
+  var el=document.getElementById('reserveRoute');
+  var selected=RESERVATIONS.filter(function(r){ return reservationSelected(r.id); });
+  if(!selected.length){
+    el.innerHTML='<p class="empty">先圈选想去的预约景点，再点“生成预约路线”。</p>';
+    return;
+  }
+  var cityIds=[];
+  for(var i=0;i<picked.length;i++) if(selected.some(function(r){return r.city===picked[i];}) && cityIds.indexOf(picked[i])<0) cityIds.push(picked[i]);
+  for(var j=0;j<selected.length;j++) if(cityIds.indexOf(selected[j].city)<0) cityIds.push(selected[j].city);
+  var h='<h3>我的预约游览路线</h3>';
+  for(var k=0;k<cityIds.length;k++){
+    var c=city(cityIds[k]);
+    var rs=selected.filter(function(r){ return r.city===cityIds[k]; });
+    if(!c || !rs.length) continue;
+    h+='<div class="route-card"><div class="route-line">'+c.emoji+' '+esc(c.name)+'：杭州出发 → '+rs.map(function(r){return esc(r.name);}).join(' → ')+' → 回杭州</div>';
+    h+='<div class="empty">当地建议顺序：'+rs.map(function(r){return esc(r.route);}).join('；')+'</div>';
+    for(var n=0;n<rs.length;n++){
+      var r=rs[n];
+      h+='<div class="route-step"><strong>'+esc(r.name)+'</strong><span>'+esc(r.window)+' · '+esc(r.duration)+' · '+esc(r.kind)+'</span></div>';
+    }
+    h+=searchLinks(c.name+' '+rs.map(function(r){return r.name;}).join(' '))+'</div>';
+  }
+  el.innerHTML=h;
+}
+
+function toggleReservation(id){
+  var r=reservation(id);
+  if(!r) return;
+  var i=reservationPicked.indexOf(id);
+  if(i>=0) reservationPicked.splice(i,1);
+  else {
+    reservationPicked.push(id);
+    if(picked.indexOf(r.city)<0) picked.push(r.city);
+    savePicked();
+  }
+  saveReservations();
+  refresh();
+  regen();
+  document.getElementById('reserveRoute').innerHTML='<p class="empty">预约景点已更新，点“生成预约路线”查看路线。</p>';
+}
+
 function toggle(id){
   var i=picked.indexOf(id);
-  if(i>=0) picked.splice(i,1); else picked.push(id);
+  if(i>=0){
+    picked.splice(i,1);
+    reservationPicked=reservationPicked.filter(function(resId){ var r=reservation(resId); return r&&r.city!==id; });
+    saveReservations();
+  } else picked.push(id);
   savePicked();
   refresh();
   regen();
@@ -961,6 +1101,7 @@ function refresh(){
   renderFilters();
   renderList();
   renderBar();
+  renderReservations();
   renderFoods();
   renderChip();
   renderSale();
@@ -991,6 +1132,22 @@ function copyText(){
     out += '\n预算粗算：高铁 ¥'+bc.fare+' · 门票 ¥'+bc.ticket+' · 吃饭 ¥'+bc.foodLo+'—'+bc.foodHi+' · 市内 ¥'+bc.trLo+'—'+bc.trHi;
     out += '\n合计约 ¥'+(bc.fare+bc.ticket+bc.foodLo+bc.trLo)+'—'+(bc.fare+bc.ticket+bc.foodHi+bc.trHi)+'\n';
   }
+  if(reservationPicked.length){
+    out += '\n预约景点路线：\n';
+    var routeCityIds=[];
+    for(var ri=0;ri<picked.length;ri++) if(reservationPicked.some(function(id){ var r=reservation(id); return r&&r.city===picked[ri]; }) && routeCityIds.indexOf(picked[ri])<0) routeCityIds.push(picked[ri]);
+    for(var rj=0;rj<reservationPicked.length;rj++){
+      var rr=reservation(reservationPicked[rj]);
+      if(rr && routeCityIds.indexOf(rr.city)<0) routeCityIds.push(rr.city);
+    }
+    for(var rk=0;rk<routeCityIds.length;rk++){
+      var rc=city(routeCityIds[rk]);
+      var rrs=RESERVATIONS.filter(function(r){ return r.city===routeCityIds[rk] && reservationSelected(r.id); });
+      if(!rc || !rrs.length) continue;
+      out += '  '+rc.name+'：杭州出发 → '+rrs.map(function(r){return r.name;}).join(' → ')+' → 回杭州\n';
+      for(var rn=0;rn<rrs.length;rn++) out += '    '+rrs[rn].name+'：'+rrs[rn].window+'，'+rrs[rn].duration+'\n';
+    }
+  }
   function done(ok){
     var tip=document.createElement('div');
     tip.className = ok?'ok-line':'warn-line';
@@ -1009,6 +1166,8 @@ function copyText(){
 }
 
 document.getElementById('list').addEventListener('click', function(e){
+  var r=e.target.closest('[data-reserve]');
+  if(r){ toggleReservation(r.getAttribute('data-reserve')); return; }
   var t=e.target.closest('[data-toggle]');
   if(t){ toggle(t.getAttribute('data-toggle')); return; }
   var o=e.target.closest('[data-open]');
@@ -1016,6 +1175,10 @@ document.getElementById('list').addEventListener('click', function(e){
     var id=o.getAttribute('data-open');
     openCity[id] = document.getElementById('city-'+id).classList.toggle('open') ? 1 : 0;
   }
+});
+document.getElementById('reserveBoard').addEventListener('click', function(e){
+  var r=e.target.closest('[data-reserve]');
+  if(r) toggleReservation(r.getAttribute('data-reserve'));
 });
 document.getElementById('selList').addEventListener('click', function(e){
   var t=e.target.closest('[data-toggle]');
@@ -1083,7 +1246,8 @@ document.getElementById('btnPlan').onclick=function(){
   renderPlan(buildPlan());
   document.getElementById('plan').scrollIntoView({behavior:'smooth', block:'start'});
 };
-document.getElementById('btnClear').onclick=function(){ picked=[]; savePicked(); planSlots=[]; document.getElementById('timeline').innerHTML=''; document.getElementById('budget').innerHTML=''; document.getElementById('planWarn').innerHTML=''; refresh(); };
+document.getElementById('btnReserveRoute').onclick=function(){ renderReservationRoute(); document.getElementById('reserveRoute').scrollIntoView({behavior:'smooth', block:'nearest'}); };
+document.getElementById('btnClear').onclick=function(){ picked=[]; reservationPicked=[]; savePicked(); saveReservations(); planSlots=[]; document.getElementById('timeline').innerHTML=''; document.getElementById('budget').innerHTML=''; document.getElementById('planWarn').innerHTML=''; document.getElementById('reserveRoute').innerHTML=''; refresh(); };
 document.getElementById('btnAll').onclick=function(){ picked=CITIES.map(function(c){return c.id;}); savePicked(); refresh(); regen(); };
 document.getElementById('btnCopy').onclick=copyText;
 document.getElementById('btnPrint').onclick=function(){ window.print(); };
