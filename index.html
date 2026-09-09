@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>国庆出行 · 余杭出发当天往返</title>
+<title>假期出行 · 余杭出发当天往返</title>
 <style>
   :root{
     --bg:#f5f3ee; --card:#ffffff; --ink:#242018; --muted:#8a8172;
@@ -39,6 +39,7 @@
   .opt input{margin-right:4px}
   .opt.on,.seg.on{background:var(--brand2);color:#fff;border-color:var(--brand2)}
   .seg{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;cursor:pointer;font-size:13px}
+  #startDate{border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px;background:#fff;color:var(--ink)}
   .actions{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
   .btn{border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--ink)}
   .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
@@ -91,7 +92,7 @@
   .food-item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
   .foot{text-align:center;color:var(--muted);font-size:12px;padding:16px 0 0}
   @media print{
-    nav.toc,.search-box,.actions,.filters,.c-head,.btn,.mv,header.hero .chips{display:none !important}
+    nav.toc,.search-box,.actions,.filters,.controls,.c-head,.btn,.mv,header.hero .chips{display:none !important}
     .city{display:none} .city.picked{display:block}
     body{background:#fff}
   }
@@ -101,11 +102,11 @@
 <body>
 <div class="wrap">
   <header class="hero">
-    <h1>余杭出发 · 国庆当天往返手册</h1>
+    <h1>余杭出发 · 假期当天往返手册</h1>
     <p>出发地：杭州市余杭区（地铁 19 号线串杭州西 / 杭州东）· 晚上回家睡，学生党版</p>
-    <p>选几座城就排几天；也可以一键把 10/1—10/7 用杭州本地日补满，不再空着。</p>
+    <p>选几座城就排几天；假期没排满的天用杭州本地日补上。日期可选中秋 / 国庆 / 元旦等，也能自定义。</p>
     <div class="chips">
-      <span class="chip">10月1—7日</span>
+      <span class="chip" id="dateChip">10/1 — 10/7</span>
       <span class="chip">带学生证</span>
       <span class="chip">单文件 · 可离线看行程</span>
     </div>
@@ -135,19 +136,30 @@
     <div class="summary" id="summary"></div>
     <div class="controls">
       <div class="ctrl">
+        <div>出行日期（节假日快速选，2027 年为预估）</div>
+        <div class="opts" id="holSegs"></div>
+        <div class="opts" style="align-items:center">
+          <input type="date" id="startDate"> <span class="empty">自定义出发日</span>
+        </div>
+      </div>
+      <div class="ctrl">
         <div>行程模式</div>
         <div class="opts">
-          <label class="opt on"><input type="radio" name="mode" value="fill" checked> 填满国庆 7 天</label>
+          <label class="opt on"><input type="radio" name="mode" value="fill" checked> 填满假期 <span id="fillN">7</span> 天</label>
           <label class="opt"><input type="radio" name="mode" value="fit"> 只排已选城市</label>
         </div>
       </div>
       <div class="ctrl" id="dayCtrl">
-        <div>天数（只排模式 · 默认＝已选城市数，可点按钮手动改）</div>
+        <div>天数（填满模式默认＝假期天数；只排模式默认＝已选城市数，均可手动改）</div>
         <div class="opts" id="daySegs"></div>
       </div>
       <label class="opt" style="display:inline-flex;align-items:center;width:fit-content">
         <input type="checkbox" id="peakHz" checked>
         高峰日（首尾两天）优先留杭州 · 天数不够时自动让位
+      </label>
+      <label class="opt" style="display:inline-flex;align-items:center;width:fit-content">
+        <input type="checkbox" id="stuTicket" checked>
+        门票按学生价估算（约半价）
       </label>
     </div>
     <div class="actions">
@@ -164,7 +176,7 @@
 
   <section class="panel" id="plan">
     <h2>行程时间轴</h2>
-    <p class="empty">选城后点「生成行程」。卡片可拖拽或点 ↑↓ 调顺序，日期仍按 10/1 起顺延；改选城市会自动重排。</p>
+    <p class="empty">选城后点「生成行程」。卡片可拖拽或点 ↑↓ 调顺序，日期从所选出发日起顺延；改选城市会自动重排。</p>
     <div id="budget"></div>
     <div class="timeline" id="timeline"></div>
     <div id="planWarn"></div>
@@ -182,19 +194,12 @@
 
   <section class="panel" id="memo">
     <h2>出行备忘</h2>
-    <h4>12306 预售（15 天含当天，2026 国庆）</h4>
+    <h4>12306 预售（提前 15 天含当天，按当前出行日期）</h4>
     <table>
       <thead><tr><th>乘车日</th><th>开售日</th><th>备注</th></tr></thead>
-      <tbody>
-        <tr><td>10/1</td><td>9/17</td><td>全国出发高峰，建议当天留杭州</td></tr>
-        <tr><td>10/2</td><td>9/18</td><td>苏州等方向开抢</td></tr>
-        <tr><td>10/3</td><td>9/19</td><td></td></tr>
-        <tr><td>10/4</td><td>9/20</td><td></td></tr>
-        <tr><td>10/5</td><td>9/21</td><td></td></tr>
-        <tr><td>10/6</td><td>9/22</td><td></td></tr>
-        <tr><td>10/7</td><td>9/23</td><td>返程最高峰，开售立刻买并开候补</td></tr>
-      </tbody>
+      <tbody id="saleBody"></tbody>
     </table>
+    <p class="empty" style="margin:6px 0 0">2027 年放假安排为预估，以官方通知为准；不合意可点上面的自定义日期微调。</p>
     <p class="links">
       <a href="https://www.12306.cn/" target="_blank" rel="noopener">打开 12306</a>
       <a href="https://www.xiaohongshu.com/search_result?keyword=%E5%9B%BD%E5%BA%86%E9%AB%98%E9%93%81%E6%8A%A2%E7%A5%A8" target="_blank" rel="noopener">小红书搜国庆抢票</a>
@@ -216,13 +221,18 @@
   <div class="foot">车程 / 票价为 2026-09 查询整理，以 12306 当天为准 · 店铺口碑以小红书、点评实时为准<br>美食清单为学生党平价向整理，不代表商家合作。</div>
 </div>
 <script>
-var DATES = [
-  {d:'10/1', w:'周四'}, {d:'10/2', w:'周五'}, {d:'10/3', w:'周六'},
-  {d:'10/4', w:'周日'}, {d:'10/5', w:'周一'}, {d:'10/6', w:'周二'}, {d:'10/7', w:'周三'}
+var HOLIDAYS = [
+  {id:'zq', name:'中秋', start:'2026-09-25', days:3},
+  {id:'gq', name:'国庆', start:'2026-10-01', days:7},
+  {id:'yd', name:'元旦', start:'2027-01-01', days:3, tip:1},
+  {id:'cj', name:'春节', start:'2027-02-06', days:7, tip:1},
+  {id:'qm', name:'清明', start:'2027-04-03', days:3, tip:1},
+  {id:'wy', name:'五一', start:'2027-05-01', days:5, tip:1}
 ];
 var RT = { hz:0, sx:40, sh:100, sz:210, nx:90, lh:210, nj:170, wx:230, yz:250 };
 var ORDER = ['nx','sz','sh','wx','nj','yz','sx','lh'];
 var FARE = { hz:0, sx:24, sh:87, sz:133, nx:59, lh:118, nj:140, wx:156, yz:178 };
+var TICKET = { sx:[40,20], sh:[0,0], sz:[80,40], nx:[95,48], lh:[55,28], nj:[0,0], wx:[90,45], yz:[100,50] };
 
 var HZ_THEMES = [
   {id:'west', name:'杭州 · 西湖西线 + 满觉陇', emoji:'🏡',
@@ -234,7 +244,7 @@ var HZ_THEMES = [
     am:'良渚古城遗址公园（余杭，16:00 停检）。',
     pm:'良渚博物院或回家歇一会儿。',
     eve:'余杭附近随便吃，不必进城挤。',
-    foods:['江南春'], booking:'良渚标准票约 60 元，学生半价，需预约。'},
+    foods:['江南春'], booking:'良渚标准票约 60 元，学生半价，需预约。', ticket:[60,30]},
   {id:'tx', name:'杭州 · 塘栖古镇', emoji:'🌉',
     am:'地铁去塘栖，广济桥、水北街，核心区免费、24 小时开放。',
     pm:'运河边慢走，人比乌镇少。',
@@ -427,6 +437,14 @@ var CITIES = [
 
 var picked = [];
 try { picked = JSON.parse(localStorage.getItem('tripPicked') || '[]'); } catch(e){ picked = []; }
+var tripStart = '2026-10-01', fillDays = 7, curHol = 'gq';
+try {
+  var st = JSON.parse(localStorage.getItem('tripState') || '{}');
+  if (st.start) tripStart = st.start;
+  if (st.fillDays) fillDays = st.fillDays;
+  if (st.hol) curHol = st.hol;
+  if (typeof st.stu === 'boolean') document.getElementById('stuTicket').checked = st.stu;
+} catch(e) {}
 var dayCount = 7;
 var dayAuto = true;
 var foodFilter = 'all';
@@ -456,6 +474,20 @@ function cheapFoods(c, n){
 }
 
 function savePicked(){ try{ localStorage.setItem('tripPicked', JSON.stringify(picked)); }catch(e){} }
+function saveState(){ try{ localStorage.setItem('tripState', JSON.stringify({ start:tripStart, fillDays:fillDays, hol:curHol, stu:document.getElementById('stuTicket').checked })); }catch(e){} }
+function holById(id){ for(var i=0;i<HOLIDAYS.length;i++) if(HOLIDAYS[i].id===id) return HOLIDAYS[i]; return null; }
+function dateAt(i){
+  var d = new Date(tripStart + 'T00:00:00');
+  d.setDate(d.getDate() + i);
+  return { d:(d.getMonth()+1)+'/'+d.getDate(), w:'周'+'日一二三四五六'.charAt(d.getDay()) };
+}
+function setMode(v){
+  var rs = document.querySelectorAll('input[name=mode]');
+  for(var i=0;i<rs.length;i++){
+    rs[i].checked = rs[i].value === v;
+    rs[i].parentElement.classList.toggle('on', rs[i].checked);
+  }
+}
 
 function renderDaySegs(){
   if(dayAuto){
@@ -463,13 +495,44 @@ function renderDaySegs(){
     for(var i=0;i<picked.length;i++) if(picked[i]!=='hz') k++;
     dayCount = Math.min(7, Math.max(1, k));
   }
-  var show = modeVal()==='fill' ? 7 : dayCount;
+  var show = modeVal()==='fill' ? fillDays : dayCount;
   var h='';
   for(var i=1;i<=7;i++){
     h += '<button type="button" class="seg'+(show===i?' on':'')+'" data-days="'+i+'">'+i+' 天</button>';
   }
   document.getElementById('daySegs').innerHTML=h;
-  document.getElementById('dayCtrl').style.opacity = modeVal()==='fill' ? .45 : 1;
+  document.getElementById('fillN').textContent=fillDays;
+}
+
+function renderHolSegs(){
+  var h='';
+  for(var i=0;i<HOLIDAYS.length;i++){
+    var x=HOLIDAYS[i];
+    var d=new Date(x.start+'T00:00:00');
+    h += '<button type="button" class="seg'+(curHol===x.id?' on':'')+'" data-hol="'+x.id+'">'+x.name+' '+(d.getMonth()+1)+'/'+d.getDate()+(x.tip?'（预）':'')+'</button>';
+  }
+  document.getElementById('holSegs').innerHTML=h;
+}
+
+function renderChip(){
+  var n = modeVal()==='fill' ? fillDays : dayCount;
+  var h = holById(curHol);
+  var label = h ? h.name+' ' : '';
+  var a=dateAt(0), b=dateAt(n-1);
+  document.getElementById('dateChip').textContent = label + a.d + ' — ' + b.d;
+}
+
+function renderSale(){
+  var n = modeVal()==='fill' ? fillDays : dayCount;
+  var h='';
+  for(var i=0;i<n;i++){
+    var t=new Date(tripStart+'T00:00:00');
+    t.setDate(t.getDate()+i);
+    var s=new Date(t.getTime()-14*86400000);
+    var note = i===0 ? '出发日，全国抢票高峰' : (i===n-1 ? '返程高峰，开售立刻买并开候补' : '');
+    h += '<tr><td>'+(t.getMonth()+1)+'/'+t.getDate()+' 周'+'日一二三四五六'.charAt(t.getDay())+'</td><td>'+(s.getMonth()+1)+'/'+s.getDate()+'</td><td>'+note+'</td></tr>';
+  }
+  document.getElementById('saleBody').innerHTML=h;
 }
 
 function renderFilters(){
@@ -568,7 +631,7 @@ function expandCities(ids, need){
 
 function buildPlan(){
   var fill = modeVal()==='fill';
-  var n = fill ? 7 : dayCount;
+  var n = fill ? fillDays : dayCount;
   var pool = picked.filter(function(id){ return id!=='hz'; });
   var peak = document.getElementById('peakHz').checked && n>=2 && (fill || n-2 >= pool.length);
   var ordered = pool.slice().sort(function(a,b){ return ORDER.indexOf(a)-ORDER.indexOf(b); });
@@ -589,7 +652,25 @@ function buildPlan(){
   return {n:n, slots:slots, leftover:leftover, peak:peak};
 }
 
-function regen(){ if(planSlots.length) renderPlan(buildPlan()); }
+function regen(){ renderChip(); renderSale(); if(planSlots.length) renderPlan(buildPlan()); }
+
+function budgetCalc(){
+  var stu = document.getElementById('stuTicket').checked;
+  var fare=0, ticket=0;
+  for(var j=0;j<planSlots.length;j++){
+    var s=planSlots[j];
+    if(s.type==='city'){
+      fare += (FARE[s.id]||0)*2;
+      var t=TICKET[s.id]||[0,0];
+      ticket += stu ? t[1] : t[0];
+    } else {
+      var tt=s.theme.ticket||[0,0];
+      ticket += stu ? tt[1] : tt[0];
+    }
+  }
+  var days=planSlots.length;
+  return { fare:fare, ticket:ticket, days:days, foodLo:40*days, foodHi:80*days, trLo:10*days, trHi:20*days };
+}
 
 function slotTitle(s){
   if(s.type==='theme') return s.theme.emoji+' '+s.theme.name;
@@ -615,7 +696,7 @@ function renderPlan(result){
   if(result.leftover) lastLeftover = result.leftover;
   var h='';
   for(var i=0;i<planSlots.length;i++){
-    var date=DATES[i];
+    var date=dateAt(i);
     var s=planSlots[i];
     var b=slotBody(s);
     var q = s.type==='theme' ? '杭州 '+s.theme.name+' 美食' : (city(s.id).name+' 便宜美食');
@@ -630,11 +711,17 @@ function renderPlan(result){
   }
   document.getElementById('timeline').innerHTML=h;
   bindDrag();
-  var fare=0;
-  for(var j=0;j<planSlots.length;j++){
-    if(planSlots[j].type==='city') fare += (FARE[planSlots[j].id]||0)*2;
-  }
-  document.getElementById('budget').innerHTML = '<p class="ok-line">粗算高铁往返约 ¥'+fare+'（未含地铁/门票/吃饭）。吃饭按每天 40—80 元点心+一顿简单正餐估。</p>';
+  var bc=budgetCalc();
+  var lo=bc.fare+bc.ticket+bc.foodLo+bc.trLo, hi=bc.fare+bc.ticket+bc.foodHi+bc.trHi;
+  document.getElementById('budget').innerHTML =
+    '<table><thead><tr><th>预算粗算（'+bc.days+' 天）</th><th>估算</th><th>口径</th></tr></thead><tbody>'+
+    '<tr><td>高铁往返</td><td>¥'+bc.fare+'</td><td>二等座全价 × 往返</td></tr>'+
+    '<tr><td>门票</td><td>¥'+bc.ticket+'</td><td>'+(document.getElementById('stuTicket').checked?'学生半价':'全价')+' · 主要收费景点</td></tr>'+
+    '<tr><td>吃饭</td><td>¥'+bc.foodLo+'—'+bc.foodHi+'</td><td>40—80 元/天</td></tr>'+
+    '<tr><td>市内交通</td><td>¥'+bc.trLo+'—'+bc.trHi+'</td><td>地铁公交 10—20 元/天</td></tr>'+
+    '<tr><td><b>合计</b></td><td><b>约 ¥'+lo+'—'+hi+'</b></td><td>不含购物</td></tr>'+
+    '</tbody></table>'+
+    '<p class="empty" style="margin:6px 0 0">高铁学生票仅限家庭—学校区间未计入；门票为代表性景点估算，以现场为准。</p>';
   var w='';
   if(result.leftover && result.leftover.length){
     var names=[];
@@ -699,10 +786,13 @@ function toggle(id){
 
 function refresh(){
   renderDaySegs();
+  renderHolSegs();
   renderFilters();
   renderList();
   renderBar();
   renderFoods();
+  renderChip();
+  renderSale();
 }
 
 function openSearch(kind){
@@ -712,12 +802,17 @@ function openSearch(kind){
 }
 
 function copyText(){
-  var out='国庆行程 · 余杭出发当天往返\n';
+  var out='假期行程 · 余杭出发当天往返\n';
   if(!planSlots.length){ out+='还没生成行程。\n'; }
   for(var i=0;i<planSlots.length;i++){
-    var date=DATES[i], s=planSlots[i], b=slotBody(s);
+    var date=dateAt(i), s=planSlots[i], b=slotBody(s);
     out += '\n'+date.d+' '+date.w+'  '+slotTitle(s)+'\n';
     out += '  车程 '+b.time+' · 约 '+b.price+'\n  上午 '+b.am+'\n  下午 '+b.pm+'\n  傍晚 '+b.eve+'\n  吃 '+(b.foods||[]).join('、')+'\n';
+  }
+  if(planSlots.length){
+    var bc=budgetCalc();
+    out += '\n预算粗算：高铁 ¥'+bc.fare+' · 门票 ¥'+bc.ticket+' · 吃饭 ¥'+bc.foodLo+'—'+bc.foodHi+' · 市内 ¥'+bc.trLo+'—'+bc.trHi;
+    out += '\n合计约 ¥'+(bc.fare+bc.ticket+bc.foodLo+bc.trLo)+'—'+(bc.fare+bc.ticket+bc.foodHi+bc.trHi)+'\n';
   }
   function done(ok){
     var tip=document.createElement('div');
@@ -751,12 +846,28 @@ document.getElementById('selList').addEventListener('click', function(e){
 });
 document.getElementById('daySegs').addEventListener('click', function(e){
   var b=e.target.closest('[data-days]');
-  if(!b || modeVal()==='fill') return;
-  dayCount=+b.getAttribute('data-days');
-  dayAuto=false;
-  renderDaySegs();
-  regen();
+  if(!b) return;
+  var n=+b.getAttribute('data-days');
+  if(modeVal()==='fill') fillDays=n;
+  else { dayCount=n; dayAuto=false; }
+  saveState(); renderDaySegs(); regen();
 });
+document.getElementById('holSegs').addEventListener('click', function(e){
+  var b=e.target.closest('[data-hol]');
+  if(!b) return;
+  var h=holById(b.getAttribute('data-hol'));
+  if(!h) return;
+  curHol=h.id; tripStart=h.start; fillDays=h.days;
+  document.getElementById('startDate').value=h.start;
+  setMode('fill');
+  saveState(); refresh(); regen();
+});
+document.getElementById('startDate').addEventListener('change', function(){
+  if(!this.value) return;
+  tripStart=this.value; curHol='diy';
+  saveState(); refresh(); regen();
+});
+document.getElementById('stuTicket').addEventListener('change', function(){ saveState(); regen(); });
 document.getElementById('timeline').addEventListener('click', function(e){
   var u=e.target.closest('[data-up]');
   var d=e.target.closest('[data-down]');
@@ -802,6 +913,7 @@ document.getElementById('btnPrint').onclick=function(){ window.print(); };
 document.getElementById('btnXhs').onclick=function(){ openSearch('xhs'); };
 document.getElementById('btnDp').onclick=function(){ openSearch('dp'); };
 document.getElementById('btnGd').onclick=function(){ openSearch('gd'); };
+document.getElementById('startDate').value=tripStart;
 refresh();
 </script>
 </body>
