@@ -12,7 +12,7 @@
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
+  body{margin:0;background-color:#eee9dd;background-image:linear-gradient(rgba(246,243,235,.68),rgba(246,243,235,.78)),url('assets/holiday-table.jpg');background-size:cover;background-position:center top;background-attachment:fixed;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
   a{color:var(--brand2)}
   .wrap{max-width:1040px;margin:0 auto;padding:16px 16px 96px}
   header.hero{background:linear-gradient(135deg,#2f6f5e,#3f8a72 55%,#c8542f);color:#fff;border-radius:18px;padding:22px 20px;margin-bottom:12px}
@@ -118,8 +118,8 @@
   .route-line{color:var(--brand2);font-weight:600;font-size:13px;margin-bottom:6px}
   .route-step{display:flex;gap:8px;font-size:13px;margin:4px 0}
   .route-step strong{color:#9a6412;white-space:nowrap}
-  .hero-cover{position:relative;min-height:570px;display:flex;align-items:stretch;overflow:hidden;background:linear-gradient(90deg,rgba(255,253,247,.94) 0%,rgba(255,253,247,.82) 42%,rgba(255,253,247,.08) 75%),url('assets/holiday-table.jpg') center/cover;border:1px solid rgba(107,74,47,.12);box-shadow:0 18px 45px rgba(74,56,35,.16);padding:32px;margin-bottom:18px}
-  .hero-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:min(47%,480px);padding:20px 0 24px}
+  .hero-cover{position:relative;min-height:570px;display:flex;align-items:stretch;overflow:hidden;background:linear-gradient(90deg,rgba(255,253,247,.86) 0%,rgba(255,253,247,.58) 42%,rgba(255,253,247,.08) 100%),url('assets/holiday-table.jpg') center right/cover;border:1px solid rgba(107,74,47,.12);box-shadow:0 18px 45px rgba(74,56,35,.16);padding:32px;margin-bottom:18px}
+  .hero-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:min(47%,480px);padding:20px 0 24px;background:rgba(255,253,247,.2);border-radius:14px}
   .hero-kicker{color:#a15a2b;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
   .hero-cover h1{margin:10px 0 12px;color:#3b281d;font-family:Georgia,"STKaiti","KaiTi",serif;font-size:clamp(30px,5vw,62px);line-height:1.03;letter-spacing:0}
   .hero-copy p{max-width:420px;color:#644f40;font-size:15px;line-height:1.8;margin:0}
@@ -129,7 +129,7 @@
   .hero-ghost{background:rgba(255,255,255,.62);color:#533a2b}
   .hero-btn:hover,.hero-ghost:hover{transform:translateY(-1px)}
   .hero-note{margin-top:28px;padding:10px 13px;border-left:3px solid #c69262;color:#745845;background:rgba(255,252,244,.66);font-size:12px}
-  .hero-map-card{position:absolute;z-index:2;right:26px;bottom:26px;width:min(50%,520px);padding:14px 16px 16px;background:rgba(255,252,244,.85);border:1px solid rgba(108,76,48,.2);border-radius:16px;backdrop-filter:blur(10px);box-shadow:0 12px 30px rgba(69,49,33,.14)}
+  .hero-map-card{position:absolute;z-index:2;right:26px;bottom:26px;width:min(50%,520px);padding:14px 16px 16px;background:rgba(255,252,244,.78);border:1px solid rgba(108,76,48,.2);border-radius:16px;backdrop-filter:blur(8px);box-shadow:0 12px 30px rgba(69,49,33,.14)}
   .map-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;color:#5f4433}
   .map-card-top strong{font-size:14px}
   .map-status{font-size:11px;color:#9a6b4a;text-align:right}
@@ -161,7 +161,8 @@
   .btn:hover,.seg:hover,.opt:hover{transform:translateY(-1px);border-color:#c78a62}
   .btn.primary{box-shadow:0 6px 14px rgba(200,84,47,.18)}
   @media (max-width:760px){
-    .hero-cover{min-height:760px;padding:22px 18px;background:linear-gradient(180deg,rgba(255,253,247,.95) 0%,rgba(255,253,247,.84) 48%,rgba(255,253,247,.08) 100%),url('assets/holiday-table.jpg') 68% center/cover}
+    body{background-image:linear-gradient(rgba(246,243,235,.74),rgba(246,243,235,.84)),url('assets/holiday-table.jpg');background-position:68% top}
+    .hero-cover{min-height:760px;padding:22px 18px;background:linear-gradient(180deg,rgba(255,253,247,.84) 0%,rgba(255,253,247,.48) 48%,rgba(255,253,247,.08) 100%),url('assets/holiday-table.jpg') 68% center/cover}
     .hero-copy{width:100%;justify-content:flex-start;padding-top:26px}
     .hero-cover h1{font-size:42px}
     .hero-map-card{right:14px;bottom:14px;left:14px;width:auto}
