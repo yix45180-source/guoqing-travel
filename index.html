@@ -3,34 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>国庆7天 · 杭州当天往返城市选择器</title>
+<title>国庆出行 · 余杭出发当天往返</title>
 <style>
   :root{
     --bg:#f5f3ee; --card:#ffffff; --ink:#242018; --muted:#8a8172;
     --line:#e8e2d6; --brand:#c8542f; --brand2:#2f6f5e; --gold:#b8860b;
-    --ok:#2f6f5e; --warn:#c8542f; --soft:#fbf9f4;
+    --soft:#fbf9f4; --shadow:0 8px 24px rgba(47,111,94,.12);
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
-  .wrap{max-width:1000px;margin:0 auto;padding:18px 16px 90px}
-  header{background:linear-gradient(135deg,#2f6f5e,#3f8a72);color:#fff;border-radius:16px;padding:22px 20px;margin-bottom:16px}
-  header h1{margin:0 0 8px;font-size:22px;letter-spacing:.5px}
-  header p{margin:2px 0;font-size:13px;opacity:.95}
+  a{color:var(--brand2)}
+  .wrap{max-width:1040px;margin:0 auto;padding:16px 16px 96px}
+  header.hero{background:linear-gradient(135deg,#2f6f5e,#3f8a72 55%,#c8542f);color:#fff;border-radius:18px;padding:22px 20px;margin-bottom:12px}
+  header.hero h1{margin:0 0 8px;font-size:22px}
+  header.hero p{margin:3px 0;font-size:13px;opacity:.95}
   .chips{margin-top:10px}
   .chip{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;margin:3px 4px 0 0}
-  .bar{position:sticky;top:10px;z-index:5;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 6px 20px rgba(0,0,0,.06);margin-bottom:16px}
+  nav.toc{position:sticky;top:0;z-index:8;display:flex;gap:8px;flex-wrap:wrap;background:rgba(245,243,238,.92);backdrop-filter:blur(8px);padding:8px 0 12px}
+  nav.toc a{text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--ink)}
+  .search-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .search-box label{font-size:13px;font-weight:600;display:block;margin-bottom:6px}
+  .search-row{display:flex;gap:8px;flex-wrap:wrap}
+  .search-row input{flex:1;min-width:180px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px}
+  .bar{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);margin-bottom:16px}
   .bar h2{margin:0 0 8px;font-size:15px}
   .sel-list{display:flex;flex-wrap:wrap;gap:8px}
-  .sel-pill{background:var(--brand2);color:#fff;border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer}
-  .sel-pill small{opacity:.85}
+  .sel-pill{background:var(--brand2);color:#fff;border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;border:0}
   .empty{color:var(--muted);font-size:13px}
   .summary{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:13px;color:#5a5145}
-  .summary b{color:var(--ink)}
+  .controls{display:grid;gap:10px;margin-top:10px}
+  .ctrl{font-size:13px}
+  .ctrl .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .opt{border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:5px 11px;cursor:pointer;font-size:13px}
+  .opt input{margin-right:4px}
+  .opt.on,.seg.on{background:var(--brand2);color:#fff;border-color:var(--brand2)}
+  .seg{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;cursor:pointer;font-size:13px}
   .actions{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
   .btn{border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--ink)}
   .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-  section.city{margin:14px 0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:box-shadow .15s, border-color .15s}
-  section.city.picked{border-color:var(--brand2);box-shadow:0 8px 24px rgba(47,111,94,.14)}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+  section.city{margin:14px 0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  section.city.picked{border-color:var(--brand2);box-shadow:var(--shadow)}
+  section.city.hide{display:none}
   .c-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
   .c-emoji{font-size:26px}
   .c-title{flex:1;min-width:0}
@@ -45,6 +60,7 @@
   .badge{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:3px 8px;font-size:12px;color:#5a5145}
   .badge.strong{background:#f6eee3;border-color:#e6d5b8;color:#7a5216;font-weight:600}
   .badge.warn{background:#fbeae6;border-color:#efc7bd;color:#9a3a22}
+  .badge.cheap{background:#e8f4ef;border-color:#b7d9cc;color:#2f6f5e}
   h4{margin:14px 0 6px;font-size:14px;color:#2f6f5e}
   ul{margin:6px 0;padding-left:18px}
   li{margin:4px 0;font-size:14px}
@@ -52,336 +68,741 @@
   li .a{color:var(--muted);font-size:12.5px}
   li .t{color:#7a5216;font-size:12.5px}
   .note{background:var(--soft);border-left:3px solid var(--gold);border-radius:6px;padding:8px 10px;font-size:13px;margin-top:10px}
-  .foot{text-align:center;color:var(--muted);font-size:12px;padding:10px 0 0}
-  @media (max-width:560px){ header h1{font-size:19px} }
+  .links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .links a{font-size:12px;text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:4px 8px;background:#fff}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+  .panel h2{margin:0 0 10px;font-size:18px}
+  .timeline{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+  .day{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:grab}
+  .day.dragging{opacity:.55}
+  .day .when{font-size:12px;color:var(--muted)}
+  .when-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .mv{display:flex;gap:4px}
+  .mv button{border:1px solid var(--line);background:#fff;border-radius:8px;width:28px;height:24px;cursor:pointer;font-size:13px;color:var(--ink);padding:0;line-height:1}
+  .mv button:hover{background:var(--soft)}
+  .day h3{margin:2px 0 8px;font-size:16px}
+  .slots{display:grid;gap:6px;font-size:13px}
+  .slots b{color:var(--brand2)}
+  .warn-line{color:#9a3a22;font-size:13px;margin-top:8px}
+  .ok-line{color:#2f6f5e;font-size:13px;margin-top:8px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+  .food-card{display:grid;gap:8px}
+  .food-item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+  .foot{text-align:center;color:var(--muted);font-size:12px;padding:16px 0 0}
+  @media print{
+    nav.toc,.search-box,.actions,.filters,.c-head,.btn,.mv,header.hero .chips{display:none !important}
+    .city{display:none} .city.picked{display:block}
+    body{background:#fff}
+  }
+  @media (max-width:560px){ header.hero h1{font-size:19px} }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>🎒 国庆7天 · 杭州当天往返城市选择器</h1>
-    <p>出发地：杭州市余杭区（地铁19号线串联杭州西站 / 杭州东站）</p>
-    <p>模式：每天出门玩一座城，晚上回杭州睡，不订酒店 · 学生党版</p>
+  <header class="hero">
+    <h1>余杭出发 · 国庆当天往返手册</h1>
+    <p>出发地：杭州市余杭区（地铁 19 号线串杭州西 / 杭州东）· 晚上回家睡，学生党版</p>
+    <p>选几座城就排几天；也可以一键把 10/1—10/7 用杭州本地日补满，不再空着。</p>
     <div class="chips">
       <span class="chip">10月1—7日</span>
-      <span class="chip">学生证部分景点半价，记得带</span>
-      <span class="chip">点击城市卡片选中 / 再点取消</span><span class="chip">📶 单文件 · 离线可用</span>
+      <span class="chip">带学生证</span>
+      <span class="chip">单文件 · 可离线看行程</span>
     </div>
   </header>
 
-  <div class="bar">
-    <h2>📌 已选城市（点它可取消）</h2>
+  <nav class="toc">
+    <a href="#pick">选城</a>
+    <a href="#plan">行程</a>
+    <a href="#eats">便宜美食</a>
+    <a href="#memo">出行备忘</a>
+  </nav>
+
+  <div class="search-box">
+    <label>去网页搜好吃的（打开小红书 / 点评 / 高德）</label>
+    <div class="search-row">
+      <input id="qFood" placeholder="例如：临海 蛋清羊尾、苏州 万福兴、仓桥直街 便宜">
+      <button class="btn primary" type="button" id="btnXhs">小红书</button>
+      <button class="btn" type="button" id="btnDp">大众点评</button>
+      <button class="btn" type="button" id="btnGd">高德地图</button>
+    </div>
+    <p class="empty" style="margin:8px 0 0">站内是整理过的平价店，实时排队和口味以小红书、点评为准，本页不抓取笔记。</p>
+  </div>
+
+  <div class="bar" id="pick">
+    <h2>已选城市（点标签可取消）</h2>
     <div class="sel-list" id="selList"><span class="empty">还没选，点下面卡片试试 →</span></div>
     <div class="summary" id="summary"></div>
+    <div class="controls">
+      <div class="ctrl">
+        <div>行程模式</div>
+        <div class="opts">
+          <label class="opt on"><input type="radio" name="mode" value="fill" checked> 填满国庆 7 天</label>
+          <label class="opt"><input type="radio" name="mode" value="fit"> 只排已选城市</label>
+        </div>
+      </div>
+      <div class="ctrl" id="dayCtrl">
+        <div>天数（只排模式 · 默认＝已选城市数，可点按钮手动改）</div>
+        <div class="opts" id="daySegs"></div>
+      </div>
+      <label class="opt" style="display:inline-flex;align-items:center;width:fit-content">
+        <input type="checkbox" id="peakHz" checked>
+        高峰日（首尾两天）优先留杭州 · 天数不够时自动让位
+      </label>
+    </div>
     <div class="actions">
-      <button class="btn primary" id="btnPlan">生成我的7天计划</button>
-      <button class="btn" id="btnCopy">复制文字版行程</button>
+      <button class="btn primary" id="btnPlan">生成行程</button>
+      <button class="btn" id="btnCopy">复制文字版</button>
+      <button class="btn" id="btnPrint">打印</button>
       <button class="btn" id="btnClear">清空</button>
       <button class="btn" id="btnAll">全选</button>
     </div>
-    <div class="summary" id="plan" style="margin-top:10px"></div>
   </div>
 
+  <div class="filters" id="cityFilters"></div>
   <div id="list"></div>
 
-  <div class="foot">车程 / 票价为 2026-09 查询数据，实际以 12306 当天为准 · 各景区预约政策出发前再核对官方渠道<br>📤 发到别人手机：把这个 .html 文件用微信/QQ/AirDrop 发过去，对方点「用其他应用打开」选浏览器即可（本页无需联网）。</div>
+  <section class="panel" id="plan">
+    <h2>行程时间轴</h2>
+    <p class="empty">选城后点「生成行程」。卡片可拖拽或点 ↑↓ 调顺序，日期仍按 10/1 起顺延；改选城市会自动重排。</p>
+    <div id="budget"></div>
+    <div class="timeline" id="timeline"></div>
+    <div id="planWarn"></div>
+  </section>
+
+  <section class="panel" id="eats">
+    <h2>跨城便宜美食</h2>
+    <div class="filters">
+      <button class="seg on" data-food="all" type="button">全部</button>
+      <button class="seg" data-food="cheap" type="button">人均约 20 元内</button>
+      <button class="seg" data-food="picked" type="button">只看已选城市</button>
+    </div>
+    <div class="food-card" id="foodBoard"></div>
+  </section>
+
+  <section class="panel" id="memo">
+    <h2>出行备忘</h2>
+    <h4>12306 预售（15 天含当天，2026 国庆）</h4>
+    <table>
+      <thead><tr><th>乘车日</th><th>开售日</th><th>备注</th></tr></thead>
+      <tbody>
+        <tr><td>10/1</td><td>9/17</td><td>全国出发高峰，建议当天留杭州</td></tr>
+        <tr><td>10/2</td><td>9/18</td><td>苏州等方向开抢</td></tr>
+        <tr><td>10/3</td><td>9/19</td><td></td></tr>
+        <tr><td>10/4</td><td>9/20</td><td></td></tr>
+        <tr><td>10/5</td><td>9/21</td><td></td></tr>
+        <tr><td>10/6</td><td>9/22</td><td></td></tr>
+        <tr><td>10/7</td><td>9/23</td><td>返程最高峰，开售立刻买并开候补</td></tr>
+      </tbody>
+    </table>
+    <p class="links">
+      <a href="https://www.12306.cn/" target="_blank" rel="noopener">打开 12306</a>
+      <a href="https://www.xiaohongshu.com/search_result?keyword=%E5%9B%BD%E5%BA%86%E9%AB%98%E9%93%81%E6%8A%A2%E7%A5%A8" target="_blank" rel="noopener">小红书搜国庆抢票</a>
+    </p>
+    <h4>西湖 2026 秋季节假日</h4>
+    <ul>
+      <li>8:00—17:00 景区单双号限行，新能源、临时号牌、非浙 A 都算。别自驾进西湖。</li>
+      <li>灵隐飞来峰免票，必须「杭州灵隐飞来峰」小程序实名预约，不再现场登记。</li>
+      <li>学生证部分景点半价；糕团店尽量上午去，下午常卖完。</li>
+    </ul>
+    <h4>常见买错站</h4>
+    <ul>
+      <li>去苏州古城买<strong>苏州站</strong>，不要买苏州南（吴江黎里，离古城约 45 公里）。</li>
+      <li>去临海紫阳街买<strong>临海站</strong>，不要买台州站（黄岩）。</li>
+      <li>去绍兴古城买<strong>绍兴北</strong>（高铁站），再进城。</li>
+    </ul>
+  </section>
+
+  <div class="foot">车程 / 票价为 2026-09 查询整理，以 12306 当天为准 · 店铺口碑以小红书、点评实时为准<br>美食清单为学生党平价向整理，不代表商家合作。</div>
 </div>
 <script>
-var CITIES = [
-  {
-    id:'hz', emoji:'🏡', name:'杭州（本地）', sub:'良渚就在余杭 · 西湖西线 · 满觉陇桂花', stars:5, tag:'在家门口', time:'0', price:'0', warn:'',
-    spots:[
-      ['良渚古城遗址公园','标准票60元，实名预约，16:00停止检票，就在余杭区','学生票半价'],
-      ['西湖西线徒步','免费 · 人少路线：太子湾→乌龟潭→霁虹桥→浴鹄湾→茅家埠→曲院风荷'],
-      ['灵隐飞来峰','免票但必须「杭州灵隐飞来峰」小程序实名预约，不再现场登记'],
-      ['满觉陇赏桂','免费 · 国庆前后正是西湖桂花节，7000余株桂树+赏桂集市'],
-      ['塘栖古镇','免费 · 24小时开放，广济桥、水北街']
-    ],
-    foods:[
-      ['知味观（湖滨总店）','上城区仁和路83号','条头糕能拉丝、定胜糕、桂花年糕'],
-      ['江南春','解放路47号（中山中路也有店）','松花蛋糕、双酿团、桂花糕，2—3元一块'],
-      ['定胜糕小店','河坊街236号','现做定胜糕（游客向，认真吃去上面两家）']
-    ],
-    booking:'灵隐、良渚要提前预约；国庆西湖景区8:00—17:00单双号限行，别自驾进景区。',
-    tips:'你住余杭，这天可以不出远门，省下最难抢的10/1高铁票。'
-  },
-  {
-    id:'sx', emoji:'🍶', name:'绍兴', sub:'鲁迅故里 · 仓桥直街 · 黄酒与茴香豆', stars:5, tag:'当天往返最轻松', time:'最快18分钟', price:'¥24', warn:'买「绍兴北」站（高铁站），不是绍兴站',
-    spots:[
-      ['鲁迅故里','免费，官方公众号提前预约，8:30—21:00，刷身份证入园'],
-      ['仓桥直街','免费 · 1.5公里石板路，傍晚红灯笼+乌篷船最出片'],
-      ['沈园','陆游《钗头凤》，需购票'],
-      ['书圣故里 / 八字桥','免费 · 八字桥是南宋古桥、大运河世界遗产点'],
-      ['东湖 / 柯岩','东湖可坐乌篷船；柯岩「云骨」冷门，游客约为鲁迅故里的1/5']
-    ],
-    foods:[
-      ['黄酒 & 茴香豆','仓桥直街沿线','温一壶花雕，配茴香豆'],
-      ['臭豆腐 / 梅干菜扣肉','鲁迅故里一带'],
-      ['绍三鲜','本地家常菜馆'],
-      ['奶油小攀','绍兴特有俄式甜点']
-    ],
-    booking:'鲁迅故里免费但要预约。',
-    tips:'杭州东→绍兴北18分钟，早去晚归毫无压力，是学生党性价比之王。'
-  },
-  {
-    id:'sh', emoji:'🌆', name:'上海', sub:'三条马路吃穿老字号 · 外滩夜景', stars:5, tag:'高铁47分钟', time:'最快47分钟', price:'¥87', warn:'国庆外滩/南京路有大客流管控，可能临时封站',
-    spots:[
-      ['老字号一条线','南京东路→南京西路→淮海中路，地铁2号线串联'],
-      ['外滩夜景','免费，别把重要行程压在晚上封站时段'],
-      ['豫园 · 城隍庙','南翔馒头店小笼'],
-      ['武康路 / 安福路','免费citywalk，梧桐老洋房'],
-      ['上海博物馆','免费但需预约（人民广场馆或东馆）']
-    ],
-    foods:[
-      ['沈大成','南京东路636号','桂花条头糕、双酿团、青团、八宝饭'],
-      ['王家沙','南京西路805号','蟹粉汤团、八宝饭、蟹粉小笼'],
-      ['乔家栅','襄阳南路313号','汤团、八宝饭、寿桃、粽子'],
-      ['光明邨大酒家','淮海中路588号','鲜肉月饼，国庆排队1小时起'],
-      ['哈尔滨食品厂','淮海中路601号','蝴蝶酥、杏仁排、花生排'],
-      ['国际饭店西饼屋','南京西路170号','蝴蝶酥（1934年）'],
-      ['老香斋 / 杏花楼','南京东路720号 / 福州路343号','小苔条、蛋黄酥 / 豆沙月饼'],
-      ['老大昌 / 凯司令','淮海中路558号 / 南京西路1001号','拿破仑、冰糕 / 栗子蛋糕']
-    ],
-    booking:'上海博物馆提前预约。',
-    tips:'上海糯叽叽比苏州南京贵，但沈大成+王家沙+乔家栅三家是百年老字号，值得当正餐吃。'
-  },
-  {
-    id:'sz', emoji:'🏞️', name:'苏州', sub:'拙政园6:45开园 · 苏式糕团天花板', stars:4, tag:'要早起', time:'最快1小时18分', price:'¥133', warn:'⚠️ 买「苏州站」，别买苏州南站（在吴江黎里，离古城45公里）',
-    spots:[
-      ['拙政园','旺季约70—90元 · 6:45开园 · 提前1—7天网上分时预约，现场不售散票 · 选6:45第一场'],
-      ['苏州博物馆','免费 · 实名全预约，提前7天、每日8:00—23:00放票'],
-      ['平江路','免费，评弹、小桥、白墙'],
-      ['七里山塘','免费，夜景好看'],
-      ['狮子林 / 双塔市集','狮子林需购票；双塔市集是网红菜场改造']
-    ],
-    foods:[
-      ['黄天源','观前街店','海棠糕、梅花糕、薄荷核桃夹糕'],
-      ['万福兴','东中市店','猪油糕、定胜糕、桂花白糖年糕，2—5元一块'],
-      ['随柳居','建新巷店','桂花糖粥、桂花赤豆小圆子、桂花赤豆糊'],
-      ['祥鑫饮食店','姑苏区','桂花赤豆圆子、卤鸡爪，人均十几块'],
-      ['乾苏铁棍馄饨','十全街店','铁棍小馄饨、桂花赤豆小圆子'],
-      ['朱新年点心店 / 荣阳楼','山塘街店','鲜肉汤团3元/只 / 油汆团子、焖肉面']
-    ],
-    booking:'拙政园9/26起可约10/3；苏博9/26 8:00开抢10/3。',
-    tips:'杭州东→苏州站最快1h18m（G7390 13:40），早班G7372/G7373 08:09→10:03。当天往返要早出晚归。'
-  },
-  {
-    id:'nx', emoji:'🏮', name:'湖州·南浔', sub:'江南古镇 · 人比乌镇西塘少', stars:5, tag:'39分钟直达', time:'39分钟', price:'¥59', warn:'从杭州西站出发（就在余杭）',
-    spots:[
-      ['南浔古镇','江南六大古镇之一，商业味最淡'],
-      ['小莲庄 / 百间楼','园林与沿河长廊，百间楼夜景最佳'],
-      ['张石铭旧宅','中西合璧大宅'],
-      ['南太湖 · 月亮酒店','顺路可看夜景']
-    ],
-    foods:[
-      ['定胜糕 / 浔蹄','古镇内','南浔三宝之一'],
-      ['双交面','古镇面馆','爆鱼+焖肉浇头'],
-      ['熏豆茶 / 绣花锦','本地茶馆/餐馆'],
-      ['丁莲芳千张包 / 周生记馄饨','湖州市区','湖州老字号']
-    ],
-    booking:'古镇大门票需购票，学生证有优惠；部分街区免费。',
-    tips:'杭州西→湖州南浔39分钟¥59，出站即到景区附近，当天往返最舒服的古镇选项。'
-  },
-  {
-    id:'lh', emoji:'🏯', name:'台州·临海', sub:'紫阳街糯叽叽天堂 · 江南长城', stars:3, tag:'要赶最早班', time:'最快1小时09分', price:'¥118', warn:'⚠️ 买「临海站」，别买台州站（在黄岩）',
-    spots:[
-      ['紫阳街','免费 · 24小时开放 · 「浙江第一古街、糯叽叽星人天堂」· 傍晚华灯初上最美'],
-      ['台州府城墙（江南长城）','约50—60元 · 7:00—17:00 · 票3天内有效可刷脸多次进出'],
-      ['东湖景区','2026年1月1日起免费开放'],
-      ['千佛井 / 龙兴寺','古街沿线的打卡点']
-    ],
-    foods:[
-      ['蛋清羊尾','紫阳街','临海头牌，蛋白打发裹豆沙油炸'],
-      ['海苔饼','紫阳街南段','外皮酥脆、内馅咸甜'],
-      ['乌饭麻糍','天宁路·陈记','糯叽叽本叽'],
-      ['麦虾 / 炒麻糍','老黄炒麻糍等','台州特色主食'],
-      ['冷饭麦饼 / 泡虾 / 扁食','街边摊','各有特色'],
-      ['麦油脂（食饼筒）','本地餐馆'],
-      ['姜汁核桃调蛋','甜口暖胃'],
-      ['嵌糕','洪池','人均15元']
-    ],
-    booking:'紫阳街和东湖免费；江南长城购票，学生证半价。',
-    tips:'杭州东→临海最快1h09m（G7501 08:02→09:11），回程最晚G7717 20:08→21:31。全程约3小时车程，适合能早起的日子。'
-  },
-  {
-    id:'nj', emoji:'🦆', name:'南京', sub:'乌饭团 · 糖芋苗 · 金陵烟火', stars:3, tag:'早出晚归', time:'1小时22分', price:'¥140', warn:'从杭州西站→南京南（1h22m）；中山陵要9/25 16:00抢免费预约',
-    spots:[
-      ['中山陵','免费但实名预约，每日16:00放票、提前7天'],
-      ['老门东','免费，蒋有记锅贴、陆氏梅花糕'],
-      ['颐和路','免费，民国老别墅citywalk'],
-      ['秦淮河 · 夫子庙','夜景，别在核心区吃饭'],
-      ['南京博物院','免费需预约']
-    ],
-    foods:[
-      ['芳婆糕团店','王府大街50号','乌饭团、糖芋苗、赤豆酒酿元宵'],
-      ['许阿姨糕团店','科巷39号','咸蛋黄肉松青团、乌米糕、桂花糕'],
-      ['蓝老大糖粥藕店','三七八巷','糖粥藕、赤豆元宵'],
-      ['蒋有记 / 陆氏梅花糕','老门东','牛肉锅贴 / 炭火梅花糕'],
-      ['鸡鸣汤包','科巷16号','鸡汁汤包、菊叶汤包+鸭油烧饼'],
-      ['小潘记鸭血粉丝汤','中山东路198号','加锅巴泡汤']
-    ],
-    booking:'中山陵、南京博物院都要提前预约。',
-    tips:'南京糯叽叽偏冬季热食，国庆去也行但不对味；当天往返约2.5—3小时车程，略赶。'
-  },
-  {
-    id:'wx', emoji:'🌊', name:'无锡', sub:'鼋头渚 · 惠山古镇 · 甜口小笼', stars:2, tag:'偏赶', time:'最快1小时35分', price:'¥156', warn:'',
-    spots:[
-      ['鼋头渚','太湖绝佳处，需购票'],
-      ['惠山古镇','免费街区+寄畅园'],
-      ['拈花湾','夜景演出，需购票'],
-      ['南长街','免费，运河边老街']
-    ],
-    foods:[
-      ['酱排骨 / 油面筋','本地菜馆','无锡招牌'],
-      ['小笼包','偏甜口'],
-      ['玉兰饼','糯米外壳，肉馅']
-    ],
-    booking:'鼋头渚、拈花湾提前购票。',
-    tips:'杭州东→无锡最快1h35m¥156，往返约3.5小时，当正餐日略赶，可考虑留给周末。'
-  },
-  {
-    id:'yz', emoji:'🍵', name:'扬州', sub:'早茶 · 东关街 · 瘦西湖', stars:1, tag:'不建议当天', time:'需南京中转', price:'约178元', warn:'杭州→南京1h22m + 南京→扬州48分，当天往返不划算',
-    spots:[
-      ['瘦西湖','需购票'],
-      ['东关街','免费老街'],
-      ['个园 / 何园','需购票']
-    ],
-    foods:[
-      ['冶春 / 富春','早茶','烫干丝、蟹粉汤包'],
-      ['盐水鹅 / 扬州炒饭','本地餐馆']
-    ],
-    booking:'瘦西湖、个园、何园购票。',
-    tips:'扬州最值得的是「早上皮包水」的早茶，当天从杭州赶不过去，建议和南京串成单独2天。'
-  }
+var DATES = [
+  {d:'10/1', w:'周四'}, {d:'10/2', w:'周五'}, {d:'10/3', w:'周六'},
+  {d:'10/4', w:'周日'}, {d:'10/5', w:'周一'}, {d:'10/6', w:'周二'}, {d:'10/7', w:'周三'}
 ];
 var RT = { hz:0, sx:40, sh:100, sz:210, nx:90, lh:210, nj:170, wx:230, yz:250 };
 var ORDER = ['nx','sz','sh','wx','nj','yz','sx','lh'];
-var picked = (function(){
-  try { return JSON.parse(localStorage.getItem('tripPicked') || '[]'); }
-  catch(e){ return []; }
-})();
+var FARE = { hz:0, sx:24, sh:87, sz:133, nx:59, lh:118, nj:140, wx:156, yz:178 };
 
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function star(n){ var s=''; for(var i=0;i<n;i++){ s+='★'; } for(var i=n;i<5;i++){ s+='☆'; } return s; }
-function city(id){ for(var i=0;i<CITIES.length;i++){ if(CITIES[i].id===id) return CITIES[i]; } return null; }
+var HZ_THEMES = [
+  {id:'west', name:'杭州 · 西湖西线 + 满觉陇', emoji:'🏡',
+    am:'太子湾→乌龟潭→霁虹桥→浴鹄湾→茅家埠，避开断桥人海。',
+    pm:'满觉陇赏桂（国庆前后桂花节）。',
+    eve:'湖滨步行街，江南春或知味观看糕点。',
+    foods:['江南春','知味观（湖滨总店）'], booking:'西湖景区节假日限行，地铁+接驳。'},
+  {id:'lz', name:'杭州 · 良渚世界遗产', emoji:'🏛️',
+    am:'良渚古城遗址公园（余杭，16:00 停检）。',
+    pm:'良渚博物院或回家歇一会儿。',
+    eve:'余杭附近随便吃，不必进城挤。',
+    foods:['江南春'], booking:'良渚标准票约 60 元，学生半价，需预约。'},
+  {id:'tx', name:'杭州 · 塘栖古镇', emoji:'🌉',
+    am:'地铁去塘栖，广济桥、水北街，核心区免费、24 小时开放。',
+    pm:'运河边慢走，人比乌镇少。',
+    eve:'回余杭或临平吃晚饭。',
+    foods:['江南春'], booking:'古镇免费，无需门票。'},
+  {id:'food', name:'杭州 · 湖滨河坊便宜糕点日', emoji:'🍡',
+    am:'江南春（解放路，2—3 元一块）打包一袋。',
+    pm:'河坊街看看即可，认真吃仍回江南春/知味观。',
+    eve:'湖滨夜逛。',
+    foods:['江南春','知味观（湖滨总店）'], booking:'游客店价更高，跟着人均走。'},
+  {id:'ly', name:'杭州 · 灵隐飞来峰', emoji:'⛰️',
+    am:'小程序抢 7:30 场，免票实名预约。',
+    pm:'灵隐人多就撤，改西湖西线或回家。',
+    eve:'休整。',
+    foods:['知味观（湖滨总店）'], booking:'必须「杭州灵隐飞来峰」小程序预约。'},
+  {id:'rest', name:'杭州 · 休整 + 近郊', emoji:'☕',
+    am:'睡到自然醒，洗衣补觉。',
+    pm:'余杭附近散步或补没去成的本地点。',
+    eve:'早睡，避开返程高峰心态。',
+    foods:['江南春'], booking:'这天可以完全不出远门。'}
+];
+
+var CITIES = [
+  {
+    id:'hz', emoji:'🏡', name:'杭州（本地）', sub:'良渚 · 西湖西线 · 满觉陇桂花', stars:5, tag:'在家门口', time:'0', price:'¥0', warn:'',
+    am:'良渚或西湖西线，看体力。', pm:'满觉陇赏桂或塘栖。', eve:'湖滨糕点。',
+    spots:[
+      ['良渚古城遗址公园','标准票约60元，16:00停检，就在余杭','学生半价'],
+      ['西湖西线徒步','免费：太子湾→乌龟潭→霁虹桥→茅家埠'],
+      ['灵隐飞来峰','免票须小程序实名预约'],
+      ['满觉陇赏桂','免费，国庆前后桂花节'],
+      ['塘栖古镇','免费，24小时开放']
+    ],
+    foods:[
+      {n:'江南春', a:'解放路47号', why:'松花蛋糕、双酿团、桂花糕', price:'2—3元/块', yuan:8, cheap:true},
+      {n:'知味观（湖滨总店）', a:'仁和路83号', why:'条头糕能拉丝、定胜糕', price:'人均20+', yuan:25, cheap:true},
+      {n:'定胜糕小店', a:'河坊街236号', why:'现做定胜糕，游客向', price:'单价不高但偏景区', yuan:15, cheap:true}
+    ],
+    booking:'灵隐、良渚要预约；西湖节假日限行。',
+    tips:'10/1 最难抢高铁，住余杭这天最适合留本地。'
+  },
+  {
+    id:'sx', emoji:'🍶', name:'绍兴', sub:'鲁迅故里 · 仓桥直街 · 黄酒茴香豆', stars:5, tag:'当天往返最轻松', time:'最快18分钟', price:'¥24', warn:'买绍兴北，不是绍兴站',
+    am:'鲁迅故里（免费预约）→ 沈园 / 八字桥。', pm:'书圣故里或东湖乌篷船。', eve:'仓桥直街红灯笼+黄酒。',
+    spots:[
+      ['鲁迅故里','免费，公众号预约，8:30—21:00'],
+      ['仓桥直街','免费 1.5 公里石板路，傍晚最出片'],
+      ['沈园','陆游钗头凤，需购票'],
+      ['书圣故里 / 八字桥','免费，大运河遗产点'],
+      ['东湖 / 柯岩','柯岩游客约为鲁迅故里的1/5']
+    ],
+    foods:[
+      {n:'仓桥直街摊', a:'仓桥直街沿线', why:'黄酒、茴香豆、臭豆腐，边走边吃', price:'几元到十几', yuan:15, cheap:true},
+      {n:'梅干菜扣肉 / 绍三鲜', a:'故里附近家常菜馆', why:'正餐别在景区最核心店', price:'人均30出头', yuan:35, cheap:false},
+      {n:'奶油小攀', a:'绍兴街头', why:'本地俄式甜点', price:'几元一块', yuan:8, cheap:true}
+    ],
+    booking:'鲁迅故里免费但要预约。',
+    tips:'杭州东→绍兴北 18 分钟，性价比之王。'
+  },
+  {
+    id:'sh', emoji:'🌆', name:'上海', sub:'三条马路老字号 · 外滩夜景', stars:5, tag:'高铁47分钟', time:'最快47分钟', price:'¥87', warn:'国庆外滩/南京路可能封站',
+    am:'南京东路：沈大成。', pm:'南京西路王家沙或淮海路点心。', eve:'外滩，避开封站时段。',
+    spots:[
+      ['南京东路→西路→淮海中路','地铁2号线串老字号'],
+      ['外滩夜景','免费，关注上海地铁官微'],
+      ['豫园 · 城隍庙','人多，点心可改去沈大成'],
+      ['武康路 / 安福路','免费 citywalk'],
+      ['上海博物馆','免费需预约']
+    ],
+    foods:[
+      {n:'沈大成', a:'南京东路636号', why:'桂花条头糕、双酿团，可当正餐点心', price:'点心十余元起', yuan:25, cheap:true},
+      {n:'乔家栅', a:'襄阳南路313号', why:'汤团、八宝饭，比南京路安静一点', price:'人均30左右', yuan:30, cheap:true},
+      {n:'老香斋', a:'南京东路720号', why:'小苔条、蛋黄酥，买了带走', price:'小份十几', yuan:20, cheap:true},
+      {n:'王家沙', a:'南京西路805号', why:'蟹粉汤团、小笼，会更贵', price:'人均60+', yuan:70, cheap:false},
+      {n:'光明邨鲜肉月饼', a:'淮海中路588号', why:'好吃但国庆排队1小时起', price:'月饼单价', yuan:40, cheap:false}
+    ],
+    booking:'上博提前预约。',
+    tips:'要便宜就走沈大成+乔家栅，别在城隍庙随便进店。'
+  },
+  {
+    id:'sz', emoji:'🏞️', name:'苏州', sub:'拙政园6:45 · 苏式糕团', stars:4, tag:'要早起', time:'最快1小时18分', price:'¥133', warn:'买苏州站，别买苏州南',
+    am:'头汤面约22元，再进拙政园第一场。', pm:'苏博免费预约；平江路。', eve:'山塘街，朱新年汤团 3 元一只。',
+    spots:[
+      ['拙政园','旺季约70—90元，6:45开园，网上分时预约'],
+      ['苏州博物馆','免费全预约，提前7天每天8:00放票'],
+      ['平江路','免费'],
+      ['七里山塘','免费夜景'],
+      ['狮子林 / 双塔市集','市集是菜场改造']
+    ],
+    foods:[
+      {n:'万福兴', a:'东中市店', why:'猪油糕、定胜糕、年糕，本地人从小吃到大', price:'2—5元/块', yuan:10, cheap:true},
+      {n:'朱新年点心店', a:'山塘街', why:'鲜肉汤团 3 元/只，买10送1', price:'约15—30', yuan:18, cheap:true},
+      {n:'随柳居', a:'建新巷', why:'桂花糖粥、赤豆小圆子，平价糖水', price:'人均十几', yuan:15, cheap:true},
+      {n:'祥鑫饮食店', a:'姑苏区', why:'桂花赤豆圆子、卤鸡爪', price:'人均十几', yuan:18, cheap:true},
+      {n:'黄天源', a:'观前街店', why:'海棠糕、梅花糕，门口现做', price:'几元一块', yuan:12, cheap:true},
+      {n:'乾苏铁棍馄饨', a:'十全街', why:'鸡汤小馄饨当正餐', price:'人均25左右', yuan:25, cheap:true}
+    ],
+    booking:'拙政园现场不售散票；苏博 9/26 8:00 可抢 10/3。',
+    tips:'杭州东→苏州站，出站近古城。苏州南在吴江，别买错。'
+  },
+  {
+    id:'nx', emoji:'🏮', name:'湖州·南浔', sub:'商业味淡的江南古镇', stars:5, tag:'39分钟直达', time:'39分钟', price:'¥59', warn:'从杭州西出发（就在余杭）',
+    am:'南浔古镇、小莲庄。', pm:'百间楼沿河。', eve:'可看南太湖，或早回。',
+    spots:[
+      ['南浔古镇','六大古镇里相对淡'],
+      ['小莲庄 / 百间楼','夜景好看'],
+      ['张石铭旧宅','中西合璧'],
+      ['南太湖', '顺路']
+    ],
+    foods:[
+      {n:'定胜糕 / 浔蹄', a:'古镇内', why:'南浔三宝，糕点便宜，蹄髈是正餐', price:'糕点几元', yuan:12, cheap:true},
+      {n:'双交面', a:'古镇面馆', why:'爆鱼+焖肉浇头，一碗顶午饭', price:'人均25左右', yuan:25, cheap:true},
+      {n:'丁莲芳千张包', a:'湖州市区', why:'老字号，顺路才去', price:'人均30', yuan:30, cheap:true}
+    ],
+    booking:'大门票学生有优惠，部分街区免费。',
+    tips:'杭州西→湖州南浔 39 分钟，出站近景区。'
+  },
+  {
+    id:'lh', emoji:'🏯', name:'台州·临海', sub:'紫阳街糯叽叽 · 江南长城', stars:3, tag:'要赶最早班', time:'最快1小时09分', price:'¥118', warn:'买临海站，别买台州站',
+    am:'紫阳街早市：海苔饼刚出炉。', pm:'江南长城（票 3 天有效）。', eve:'蛋清羊尾、乌饭麻糍再扫一轮。',
+    spots:[
+      ['紫阳街','免费 24 小时，傍晚华灯最好看'],
+      ['台州府城墙','约50—60元，7:00—17:00'],
+      ['东湖景区','2026年起免费'],
+      ['千佛井 / 龙兴寺','古街沿线']
+    ],
+    foods:[
+      {n:'蛋清羊尾', a:'紫阳街', why:'临海头牌，蛋白裹豆沙油炸', price:'几元一份', yuan:10, cheap:true},
+      {n:'海苔饼', a:'紫阳街南段', why:'外酥内咸甜，网红但便宜', price:'几元', yuan:8, cheap:true},
+      {n:'陈记乌饭麻糍', a:'天宁路', why:'糯叽叽本命', price:'几元', yuan:8, cheap:true},
+      {n:'洪池嵌糕', a:'洪池', why:'人均约15的本地早饭', price:'约15元', yuan:15, cheap:true},
+      {n:'麦虾 / 炒麻糍 / 食饼筒', a:'街边', why:'当正餐也花不了多少', price:'人均20左右', yuan:20, cheap:true}
+    ],
+    booking:'紫阳街、东湖免费；长城学生证常半价。',
+    tips:'杭州东→临海最早约 08:02；回程最晚留意 20:08 班。'
+  },
+  {
+    id:'nj', emoji:'🦆', name:'南京', sub:'老门东 · 糕团 · 民国别墅', stars:3, tag:'早出晚归', time:'1小时22分', price:'¥140', warn:'杭州西→南京南；中山陵要预约',
+    am:'科巷糕团（去晚没有）。', pm:'颐和路 citywalk 或南博。', eve:'老门东锅贴、梅花糕。',
+    spots:[
+      ['中山陵','免费实名预约，每日16:00放票'],
+      ['老门东','免费'],
+      ['颐和路','免费民国别墅'],
+      ['秦淮河 · 夫子庙','别在核心区吃饭'],
+      ['南京博物院','免费需预约']
+    ],
+    foods:[
+      {n:'芳婆糕团店', a:'王府大街50号', why:'乌饭团、糖芋苗，早点窗口', price:'几元到十几', yuan:12, cheap:true},
+      {n:'许阿姨糕团店', a:'科巷39号', why:'咸蛋黄肉松青团、桂花糕', price:'几元一块', yuan:10, cheap:true},
+      {n:'蒋有记', a:'老门东', why:'牛肉锅贴当晚饭', price:'人均30左右', yuan:30, cheap:true},
+      {n:'陆氏梅花糕', a:'老门东', why:'炭火现烤', price:'几元一块', yuan:8, cheap:true},
+      {n:'小潘记鸭血粉丝汤', a:'中山东路198号', why:'加锅巴，正餐便宜', price:'人均25', yuan:25, cheap:true}
+    ],
+    booking:'中山陵、南博都要预约。',
+    tips:'糯叽叽更偏冬天热食；当天往返约 3 小时车程，略赶。'
+  },
+  {
+    id:'wx', emoji:'🌊', name:'无锡', sub:'鼋头渚 · 惠山 · 甜口小笼', stars:2, tag:'偏赶', time:'最快1小时35分', price:'¥156', warn:'',
+    am:'惠山古镇免费街区。', pm:'鼋头渚或南长街。', eve:'早班回杭更稳。',
+    spots:[
+      ['鼋头渚','需购票'],
+      ['惠山古镇','免费街区+寄畅园'],
+      ['南长街','免费运河'],
+      ['拈花湾','夜景另购票，当天往返难']
+    ],
+    foods:[
+      {n:'酱排骨 / 油面筋', a:'本地菜馆', why:'招牌，小份即可', price:'人均40+', yuan:45, cheap:false},
+      {n:'玉兰饼', a:'街头', why:'糯米皮肉馅，几元一张', price:'几元', yuan:8, cheap:true},
+      {n:'甜口小笼', a:'车站或南长街', why:'无锡口味偏甜', price:'一笼20左右', yuan:22, cheap:true}
+    ],
+    booking:'鼋头渚提前购票。',
+    tips:'往返约 3.5 小时，排进 7 天可以，但别排满景。'
+  },
+  {
+    id:'yz', emoji:'🍵', name:'扬州', sub:'早茶 · 东关街 · 瘦西湖', stars:1, tag:'不建议当天', time:'需南京中转', price:'约¥178', warn:'当天往返不划算',
+    am:'如果硬去：早茶会迟到。', pm:'东关街更合适。', eve:'很难当天回杭吃晚饭。',
+    spots:[
+      ['瘦西湖','购票'],
+      ['东关街','免费老街'],
+      ['个园 / 何园','购票']
+    ],
+    foods:[
+      {n:'路边烫干丝 / 点心', a:'东关街', why:'吃不上午茶就买散点', price:'十几元', yuan:18, cheap:true},
+      {n:'冶春 / 富春', a:'早茶', why:'正宗但要早上、也更贵', price:'人均80+', yuan:90, cheap:false}
+    ],
+    booking:'园林购票。',
+    tips:'更适合和南京拼 2 天，不建议塞进当天往返 7 天。'
+  }
+];
+
+var picked = [];
+try { picked = JSON.parse(localStorage.getItem('tripPicked') || '[]'); } catch(e){ picked = []; }
+var dayCount = 7;
+var dayAuto = true;
+var foodFilter = 'all';
+var planSlots = [];
+var lastLeftover = [];
+var cityFilter = 'all';
+var openCity = {};
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function star(n){ var s=''; for(var i=0;i<5;i++) s += i<n?'★':'☆'; return s; }
+function city(id){ for(var i=0;i<CITIES.length;i++) if(CITIES[i].id===id) return CITIES[i]; return null; }
 function nm(id){ var c=city(id); return c ? c.name : id; }
 function rtTxt(id){ var m=RT[id]; return m===0 ? '在家门口' : '往返约 ' + (Math.round(m/6)/10) + ' 小时'; }
+function modeVal(){ var el=document.querySelector('input[name=mode]:checked'); return el?el.value:'fill'; }
+function xhs(q){ return 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent(q); }
+function dp(q){ return 'https://www.dianping.com/search/keyword/1/0_' + encodeURIComponent(q); }
+function gd(q){ return 'https://ditu.amap.com/search?query=' + encodeURIComponent(q); }
+function searchLinks(q){
+  return '<span class="links"><a href="'+xhs(q)+'" target="_blank" rel="noopener">小红书</a>'+
+    '<a href="'+dp(q)+'" target="_blank" rel="noopener">点评</a>'+
+    '<a href="'+gd(q)+'" target="_blank" rel="noopener">高德</a></span>';
+}
+function foodYuan(f){ return f.yuan||99; }
+function cheapFoods(c, n){
+  var arr = (c.foods||[]).slice().sort(function(a,b){ return foodYuan(a)-foodYuan(b); });
+  return arr.filter(function(f){ return f.cheap; }).slice(0, n||3);
+}
+
+function savePicked(){ try{ localStorage.setItem('tripPicked', JSON.stringify(picked)); }catch(e){} }
+
+function renderDaySegs(){
+  if(dayAuto){
+    var k=0;
+    for(var i=0;i<picked.length;i++) if(picked[i]!=='hz') k++;
+    dayCount = Math.min(7, Math.max(1, k));
+  }
+  var show = modeVal()==='fill' ? 7 : dayCount;
+  var h='';
+  for(var i=1;i<=7;i++){
+    h += '<button type="button" class="seg'+(show===i?' on':'')+'" data-days="'+i+'">'+i+' 天</button>';
+  }
+  document.getElementById('daySegs').innerHTML=h;
+  document.getElementById('dayCtrl').style.opacity = modeVal()==='fill' ? .45 : 1;
+}
+
+function renderFilters(){
+  var opts=[['all','全部'],['easy','1小时内车程'],['cheap','票价约百元内'],['star','四星以上']];
+  var h='';
+  for(var i=0;i<opts.length;i++){
+    h += '<button type="button" class="seg'+(cityFilter===opts[i][0]?' on':'')+'" data-cf="'+opts[i][0]+'">'+opts[i][1]+'</button>';
+  }
+  document.getElementById('cityFilters').innerHTML=h;
+}
+
+function cityPassFilter(c){
+  if(cityFilter==='easy') return RT[c.id]<=100;
+  if(cityFilter==='cheap') return (FARE[c.id]||0)<=100;
+  if(cityFilter==='star') return c.stars>=4;
+  return true;
+}
 
 function renderList(){
   var h='';
   for(var i=0;i<CITIES.length;i++){
     var c=CITIES[i];
     var on = picked.indexOf(c.id)>=0;
-    h += '<section class="city'+(on?' picked':'')+'" id="city-'+c.id+'">';
-    h += '<div class="c-head" onclick="toggle('+"'"+c.id+"'"+')">';
+    h += '<section class="city'+(on?' picked':'')+((on||openCity[c.id])?' open':'')+(cityPassFilter(c)?'':' hide')+'" id="city-'+c.id+'">';
+    h += '<div class="c-head" data-open="'+c.id+'">';
     h += '<div class="c-emoji">'+c.emoji+'</div>';
-    h += '<div class="c-title"><h3>'+c.name+'</h3><div class="sub">'+esc(c.sub)+'</div><div class="sub" style="font-size:11px;margin-top:3px;color:#7a5216">🚄 '+esc(c.time)+' · 💰 '+esc(c.price)+' · '+rtTxt(c.id)+'</div></div>';
-    h += '<div style="text-align:right"><div class="stars">'+star(c.stars)+'</div><div class="sub" style="font-size:11px;color:#8a8172">'+esc(c.tag)+'</div></div>';
-    h += '<div class="check">'+(on?'✓':'')+'</div></div>';
+    h += '<div class="c-title"><h3>'+c.name+'</h3><div class="sub">'+esc(c.sub)+'</div>';
+    h += '<div class="sub" style="font-size:11px;margin-top:3px;color:#7a5216">高铁 '+esc(c.time)+' · 约 '+esc(c.price)+' · '+rtTxt(c.id)+'</div></div>';
+    h += '<div style="text-align:right"><div class="stars">'+star(c.stars)+'</div><div class="sub" style="font-size:11px">'+esc(c.tag)+'</div></div>';
+    h += '<div class="check" data-toggle="'+c.id+'" title="选入行程">'+(on?'✓':'')+'</div></div>';
     h += '<div class="c-body">';
-    h += '<div class="row">';
-    h += '<span class="badge strong">🚄 '+esc(c.time)+'</span>';
-    h += '<span class="badge strong">💰 '+esc(c.price)+'</span>';
+    h += '<div class="row"><span class="badge strong">'+esc(c.time)+'</span><span class="badge strong">'+esc(c.price)+'</span>';
     h += '<span class="badge">'+rtTxt(c.id)+'</span>';
-    if(c.warn){ h += '<span class="badge warn">'+esc(c.warn)+'</span>'; }
+    if(c.warn) h += '<span class="badge warn">'+esc(c.warn)+'</span>';
     h += '</div>';
-    h += '<h4>🎡 景点</h4><ul>';
-    for(var j=0;j<c.spots.length;j++){ var sp=c.spots[j]; h += '<li><span class="n">'+sp[0]+'</span> <span class="a">· '+esc(sp[1])+'</span>'+(sp[2]?' <span class="t">('+esc(sp[2])+')</span>':'')+'</li>'; }
-    h += '</ul>';
-    h += '<h4>🍡 糯叽叽 / 美食</h4><ul>';
-    for(var k=0;k<c.foods.length;k++){ var f=c.foods[k]; h += '<li><span class="n">'+f[0]+'</span>'+(f[1]?' <span class="a">'+esc(f[1])+'</span>':'')+(f[2]?' <span class="t">— '+esc(f[2])+'</span>':'')+'</li>'; }
-    h += '</ul>';
-    if(c.booking){ h += '<div class="note">🎫 预约：'+esc(c.booking)+'</div>'; }
-    if(c.tips){ h += '<div class="note">💡 '+esc(c.tips)+'</div>'; }
+    h += '<h4>景点</h4><ul>';
+    for(var j=0;j<c.spots.length;j++){
+      var sp=c.spots[j];
+      h += '<li><span class="n">'+esc(sp[0])+'</span> <span class="a">· '+esc(sp[1])+'</span>'+(sp[2]?' <span class="t">('+esc(sp[2])+')</span>':'')+'</li>';
+    }
+    h += '</ul><h4>便宜好吃</h4><ul>';
+    for(var k=0;k<c.foods.length;k++){
+      var f=c.foods[k];
+      h += '<li><span class="n">'+esc(f.n)+'</span> <span class="a">'+esc(f.a)+'</span> <span class="t">'+esc(f.price)+' — '+esc(f.why)+'</span> ';
+      if(f.cheap) h += '<span class="badge cheap">平价</span> ';
+      h += searchLinks(c.name.replace(/[（(].*/,'')+' '+f.n)+'</li>';
+    }
+    h += '</ul>'+searchLinks(c.name+' 便宜美食 学生');
+    if(c.booking) h += '<div class="note">预约：'+esc(c.booking)+'</div>';
+    if(c.tips) h += '<div class="note">'+esc(c.tips)+'</div>';
     h += '</div></section>';
   }
-  document.getElementById('list').innerHTML = h;
-}
-
-function toggle(id){
-  var i = picked.indexOf(id);
-  if(i>=0){ picked.splice(i,1); } else { picked.push(id); }
-  try{ localStorage.setItem('tripPicked', JSON.stringify(picked)); }catch(e){}
-  refresh();
+  document.getElementById('list').innerHTML=h;
 }
 
 function renderBar(){
-  var el = document.getElementById('selList');
-  if(picked.length===0){ el.innerHTML='<span class="empty">还没选，点下面卡片试试 →</span>'; }
+  var el=document.getElementById('selList');
+  if(!picked.length) el.innerHTML='<span class="empty">还没选，点下面卡片试试 →</span>';
   else{
     var h='';
-    for(var i=0;i<picked.length;i++){ var c=city(picked[i]); h += '<span class="sel-pill" onclick="toggle('+"'"+picked[i]+"'"+')">'+c.emoji+' '+c.name+' <small>'+esc(c.time)+'</small> ×</span>'; }
+    for(var i=0;i<picked.length;i++){
+      var c=city(picked[i]);
+      h += '<button type="button" class="sel-pill" data-toggle="'+picked[i]+'">'+c.emoji+' '+c.name+' <small>'+esc(c.time)+'</small> ×</button>';
+    }
     el.innerHTML=h;
   }
   var sum='';
   if(picked.length){
     var tot=0, nonhz=0;
-    for(var j=0;j<picked.length;j++){ tot += RT[picked[j]]; if(picked[j]!=='hz') nonhz++; }
-    sum = '已选 '+picked.length+' 个 · 其中 '+nonhz+' 个外地城市';
-    sum += ' · 平均单日通勤约 '+(Math.round((tot/nonhz)/6)/10 || 0)+' 小时（往返）';
-    if(nonhz>5){ sum += ' · ⚠️ 城市有点多，7天会排不下'; }
+    for(var j=0;j<picked.length;j++){ tot += RT[picked[j]]||0; if(picked[j]!=='hz') nonhz++; }
+    sum='已选 '+picked.length+' 座 · 外地 '+nonhz+' 座';
+    if(nonhz) sum += ' · 平均往返约 '+(Math.round((tot/nonhz)/6)/10)+' 小时';
   }
-  document.getElementById('summary').innerHTML = sum;
-  document.getElementById('plan').innerHTML = '';
+  document.getElementById('summary').innerHTML=sum;
 }
 
-function genPlan(){
-  var days=['10/1 周四','10/2 周五','10/3 周六','10/4 周日','10/5 周一','10/6 周二','10/7 周三'];
-  var pool = picked.filter(function(id){ return id!=='hz'; });
-  var ordered = pool.slice().sort(function(a,b){ return ORDER.indexOf(a)-ORDER.indexOf(b); });
-  var lines=[];
-  lines.push('<b>🗓️ 我的7天（每天回杭州）</b>');
-  lines.push('10/1 周四：杭州本地（良渚/西湖西线，避开最难抢的高铁票）');
-  var i=0;
-  for(var d=1; d<6 && i<ordered.length; d++){
-    lines.push(days[d]+'：'+nm(ordered[i])+'（当天往返，'+esc(city(ordered[i]).time)+'）');
-    i++;
+function nextTheme(used){
+  for(var i=0;i<HZ_THEMES.length;i++){
+    if(used.indexOf(HZ_THEMES[i].id)<0){ used.push(HZ_THEMES[i].id); return {type:'theme', theme:HZ_THEMES[i]}; }
   }
-  lines.push('10/7 周三：杭州本地休整（灵隐/满觉陇/塘栖，避开返程高峰）');
-  var rest=ordered.slice(i);
-  if(rest.length){ lines.push('⚠️ 还有 '+rest.map(nm).join('、')+' 没排进7天：可替换上面某天，或留到周末去。'); }
-  if(pool.length===0){ lines.push('还没选城市，先点下面卡片。'); }
-  document.getElementById('plan').innerHTML = lines.join('<br>');
+  return {type:'theme', theme:HZ_THEMES[HZ_THEMES.length-1]};
+}
+
+function expandCities(ids, need){
+  var out=[];
+  for(var i=0;i<ids.length;i++) out.push({type:'city', id:ids[i], pass:1});
+  if(!ids.length) return out;
+  var extra = need - out.length;
+  var k=0;
+  while(extra>0 && k<ids.length){
+    out.splice(k*2+1, 0, {type:'city', id:ids[k], pass:2});
+    extra--; k++;
+  }
+  return out;
+}
+
+function buildPlan(){
+  var fill = modeVal()==='fill';
+  var n = fill ? 7 : dayCount;
+  var pool = picked.filter(function(id){ return id!=='hz'; });
+  var peak = document.getElementById('peakHz').checked && n>=2 && (fill || n-2 >= pool.length);
+  var ordered = pool.slice().sort(function(a,b){ return ORDER.indexOf(a)-ORDER.indexOf(b); });
+  var used=[];
+  var inner = peak ? n-2 : n;
+  var leftover=[];
+  var mid = expandCities(ordered, inner);
+  if(mid.length>inner){ leftover = mid.slice(inner).map(function(s){ return s.id; }); mid = mid.slice(0, inner); }
+  while(mid.length<inner) mid.push(nextTheme(used));
+  var slots=[];
+  if(peak){
+    slots.push(nextTheme(used));
+    for(var i=0;i<mid.length;i++) slots.push(mid[i]);
+    slots.push(nextTheme(used));
+  } else {
+    slots = mid;
+  }
+  return {n:n, slots:slots, leftover:leftover, peak:peak};
+}
+
+function regen(){ if(planSlots.length) renderPlan(buildPlan()); }
+
+function slotTitle(s){
+  if(s.type==='theme') return s.theme.emoji+' '+s.theme.name;
+  var c=city(s.id);
+  return c.emoji+' '+c.name+(s.pass===2?' · 慢游补一天':'');
+}
+
+function slotBody(s){
+  if(s.type==='theme'){
+    var t=s.theme;
+    return {am:t.am, pm:t.pm, eve:t.eve, foods:t.foods, booking:t.booking, time:'在家门口', price:'¥0'};
+  }
+  var c=city(s.id);
+  var foods=cheapFoods(c,3).map(function(f){ return f.n+'（'+f.price+'）'; });
+  if(s.pass===2){
+    return {am:'专吃：'+foods.join('、'), pm:c.spots.slice(2,4).map(function(x){return x[0];}).join('、')||'未去过的冷门点', eve:'早一点回杭，别把末班高铁卡死。', foods:foods, booking:c.booking, time:c.time, price:c.price};
+  }
+  return {am:c.am, pm:c.pm, eve:c.eve, foods:foods, booking:c.booking, time:c.time, price:c.price};
+}
+
+function renderPlan(result){
+  planSlots = result.slots;
+  if(result.leftover) lastLeftover = result.leftover;
+  var h='';
+  for(var i=0;i<planSlots.length;i++){
+    var date=DATES[i];
+    var s=planSlots[i];
+    var b=slotBody(s);
+    var q = s.type==='theme' ? '杭州 '+s.theme.name+' 美食' : (city(s.id).name+' 便宜美食');
+    h += '<article class="day" draggable="true" data-i="'+i+'">';
+    h += '<div class="when-row"><div class="when">'+date.d+' '+date.w+' · 第 '+(i+1)+' 天</div><div class="mv"><button type="button" data-up="'+i+'" title="上移一天">↑</button><button type="button" data-down="'+i+'" title="下移一天">↓</button></div></div>';
+    h += '<h3>'+esc(slotTitle(s))+'</h3>';
+    h += '<div class="row"><span class="badge strong">'+esc(b.time)+'</span><span class="badge strong">单程约 '+esc(b.price)+'</span></div>';
+    h += '<div class="slots"><div><b>上午</b> '+esc(b.am)+'</div><div><b>下午</b> '+esc(b.pm)+'</div><div><b>傍晚</b> '+esc(b.eve)+'</div>';
+    h += '<div><b>便宜吃</b> '+esc((b.foods||[]).join('、'))+'</div></div>';
+    if(b.booking) h += '<div class="note">'+esc(b.booking)+'</div>';
+    h += searchLinks(q)+'</article>';
+  }
+  document.getElementById('timeline').innerHTML=h;
+  bindDrag();
+  var fare=0;
+  for(var j=0;j<planSlots.length;j++){
+    if(planSlots[j].type==='city') fare += (FARE[planSlots[j].id]||0)*2;
+  }
+  document.getElementById('budget').innerHTML = '<p class="ok-line">粗算高铁往返约 ¥'+fare+'（未含地铁/门票/吃饭）。吃饭按每天 40—80 元点心+一顿简单正餐估。</p>';
+  var w='';
+  if(result.leftover && result.leftover.length){
+    var names=[];
+    var seen={};
+    for(var k=0;k<result.leftover.length;k++){
+      if(!seen[result.leftover[k]]){ seen[result.leftover[k]]=1; names.push(nm(result.leftover[k])); }
+    }
+    w='<p class="warn-line">这几座没排进当前天数：'+names.join('、')+'。可减少高峰留杭、增加天数，或拖掉某天换成它们。</p>';
+  } else if(!picked.filter(function(id){return id!=='hz';}).length && picked.indexOf('hz')<0){
+    w='<p class="warn-line">还没选外地城市：填满模式会用杭州主题日铺满；想去外地请先点城市卡片。</p>';
+  }
+  document.getElementById('planWarn').innerHTML=w;
+}
+
+function bindDrag(){
+  var days=document.querySelectorAll('.day');
+  var from=null;
+  for(var i=0;i<days.length;i++){
+    days[i].addEventListener('dragstart', function(e){ from=+this.getAttribute('data-i'); this.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+    days[i].addEventListener('dragend', function(){ this.classList.remove('dragging'); });
+    days[i].addEventListener('dragover', function(e){ e.preventDefault(); });
+    days[i].addEventListener('drop', function(e){
+      e.preventDefault();
+      var to=+this.getAttribute('data-i');
+      if(from===null || from===to) return;
+      var item=planSlots.splice(from,1)[0];
+      planSlots.splice(to,0,item);
+      renderPlan({slots:planSlots, leftover:[], n:planSlots.length});
+    });
+  }
+}
+
+function renderFoods(){
+  var items=[];
+  for(var i=0;i<CITIES.length;i++){
+    var c=CITIES[i];
+    if(foodFilter==='picked' && picked.indexOf(c.id)<0) continue;
+    for(var j=0;j<c.foods.length;j++){
+      var f=c.foods[j];
+      if(foodFilter==='cheap' && (!f.cheap || foodYuan(f)>20)) continue;
+      items.push({c:c, f:f});
+    }
+  }
+  items.sort(function(a,b){ return foodYuan(a.f)-foodYuan(b.f); });
+  var h='';
+  for(var k=0;k<items.length;k++){
+    var it=items[k], f=it.f, c=it.c;
+    h += '<div class="food-item"><div><b>'+esc(f.n)+'</b> · '+esc(c.name)+' '+(f.cheap?'<span class="badge cheap">平价</span>':'')+'</div>';
+    h += '<div class="a">'+esc(f.a)+' · '+esc(f.price)+'</div><div>'+esc(f.why)+'</div>';
+    h += searchLinks(c.name.replace(/[（(].*/,'')+' '+f.n)+'</div>';
+  }
+  document.getElementById('foodBoard').innerHTML = h || '<p class="empty">没有符合筛选的店。</p>';
+}
+
+function toggle(id){
+  var i=picked.indexOf(id);
+  if(i>=0) picked.splice(i,1); else picked.push(id);
+  savePicked();
+  refresh();
+  regen();
 }
 
 function refresh(){
+  renderDaySegs();
+  renderFilters();
   renderList();
   renderBar();
-  var secs=document.querySelectorAll('section.city');
-  for(var i=0;i<secs.length;i++){
-    if(secs[i].classList.contains('picked')){ secs[i].classList.add('open'); }
-  }
+  renderFoods();
 }
-document.getElementById('btnPlan').onclick=genPlan;
-document.getElementById('btnClear').onclick=function(){ picked=[]; try{ localStorage.removeItem('tripPicked'); }catch(e){} refresh(); };
-document.getElementById('btnAll').onclick=function(){ picked=CITIES.map(function(c){ return c.id; }); try{ localStorage.setItem('tripPicked', JSON.stringify(picked)); }catch(e){} refresh(); };
-refresh();
+
+function openSearch(kind){
+  var q=document.getElementById('qFood').value.trim() || '杭州 便宜 糕点';
+  var url = kind==='xhs'?xhs(q): kind==='dp'?dp(q):gd(q);
+  window.open(url,'_blank','noopener');
+}
 
 function copyText(){
-  var out = '🎒 国庆7天 · 杭州当天往返（学生党版）\n';
-  var any = false;
-  for(var i=0;i<picked.length;i++){
-    var c = city(picked[i]);
-    out += '\n' + c.emoji + ' ' + c.name + ' ｜ 车程 ' + c.time + ' ｜ ' + c.price + ' ｜ ' + rtTxt(c.id) + '\n';
-    out += '  景点：';
-    for(var j=0;j<c.spots.length;j++){ out += (j?', ':'') + c.spots[j][0]; }
-    out += '\n  吃：';
-    for(var k=0;k<c.foods.length;k++){ out += (k?', ':'') + c.foods[k][0]; }
-    if(c.warn){ out += '\n  ⚠️ ' + c.warn; }
-    out += '\n';
-    any = true;
+  var out='国庆行程 · 余杭出发当天往返\n';
+  if(!planSlots.length){ out+='还没生成行程。\n'; }
+  for(var i=0;i<planSlots.length;i++){
+    var date=DATES[i], s=planSlots[i], b=slotBody(s);
+    out += '\n'+date.d+' '+date.w+'  '+slotTitle(s)+'\n';
+    out += '  车程 '+b.time+' · 约 '+b.price+'\n  上午 '+b.am+'\n  下午 '+b.pm+'\n  傍晚 '+b.eve+'\n  吃 '+(b.foods||[]).join('、')+'\n';
   }
-  if(!any){ out += '\n还没选城市。'; }
-  function done(ok){ var tip=document.createElement('div'); tip.style.cssText='margin-top:8px;font-size:13px;color:'+(ok?'#2f6f5e':'#9a3a22'); tip.textContent= ok ? '已复制，去微信/备忘录粘贴即可' : '复制失败，可长按选择下方文字手动复制'; document.getElementById('plan').appendChild(tip); setTimeout(function(){ tip.remove(); }, 3000); }
-  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(out).then(function(){ done(true); }, function(){ fallback(); }); } else { fallback(); }
+  function done(ok){
+    var tip=document.createElement('div');
+    tip.className = ok?'ok-line':'warn-line';
+    tip.textContent = ok?'已复制':'复制失败，可全选时间轴手动复制';
+    document.getElementById('planWarn').appendChild(tip);
+    setTimeout(function(){ tip.remove(); }, 2500);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(out).then(function(){ done(true); }, function(){ fallback(); });
+  } else fallback();
   function fallback(){
-    var ta=document.createElement('textarea'); ta.value=out; ta.style.position='fixed'; ta.style.left='-9999px';
-    document.body.appendChild(ta); ta.select();
-    try{ document.execCommand('copy'); done(true); }catch(e){ done(false); document.getElementById('plan').innerHTML += '<div style="margin-top:8px;font-size:13px;white-space:pre-wrap">'+esc(out)+'</div>'; }
+    var ta=document.createElement('textarea'); ta.value=out; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(true); }catch(e){ done(false); }
     document.body.removeChild(ta);
   }
 }
+
+document.getElementById('list').addEventListener('click', function(e){
+  var t=e.target.closest('[data-toggle]');
+  if(t){ toggle(t.getAttribute('data-toggle')); return; }
+  var o=e.target.closest('[data-open]');
+  if(o){
+    var id=o.getAttribute('data-open');
+    openCity[id] = document.getElementById('city-'+id).classList.toggle('open') ? 1 : 0;
+  }
+});
+document.getElementById('selList').addEventListener('click', function(e){
+  var t=e.target.closest('[data-toggle]');
+  if(t) toggle(t.getAttribute('data-toggle'));
+});
+document.getElementById('daySegs').addEventListener('click', function(e){
+  var b=e.target.closest('[data-days]');
+  if(!b || modeVal()==='fill') return;
+  dayCount=+b.getAttribute('data-days');
+  dayAuto=false;
+  renderDaySegs();
+  regen();
+});
+document.getElementById('timeline').addEventListener('click', function(e){
+  var u=e.target.closest('[data-up]');
+  var d=e.target.closest('[data-down]');
+  var i, item;
+  if(u){
+    i=+u.getAttribute('data-up');
+    if(i>0){ item=planSlots.splice(i,1)[0]; planSlots.splice(i-1,0,item); renderPlan({slots:planSlots, leftover:[], n:planSlots.length}); }
+  } else if(d){
+    i=+d.getAttribute('data-down');
+    if(i<planSlots.length-1){ item=planSlots.splice(i,1)[0]; planSlots.splice(i+1,0,item); renderPlan({slots:planSlots, leftover:[], n:planSlots.length}); }
+  }
+});
+document.getElementById('cityFilters').addEventListener('click', function(e){
+  var b=e.target.closest('[data-cf]');
+  if(!b) return;
+  cityFilter=b.getAttribute('data-cf');
+  renderFilters(); renderList();
+});
+document.getElementById('eats').addEventListener('click', function(e){
+  var b=e.target.closest('[data-food]');
+  if(!b) return;
+  foodFilter=b.getAttribute('data-food');
+  var segs=document.querySelectorAll('#eats [data-food]');
+  for(var i=0;i<segs.length;i++) segs[i].classList.toggle('on', segs[i]===b);
+  renderFoods();
+});
+document.querySelectorAll('input[name=mode]').forEach(function(r){
+  r.addEventListener('change', function(){
+    document.querySelectorAll('input[name=mode]').forEach(function(x){ x.parentElement.classList.toggle('on', x.checked); });
+    renderDaySegs();
+    regen();
+  });
+});
+document.getElementById('peakHz').addEventListener('change', regen);
+document.getElementById('btnPlan').onclick=function(){
+  renderPlan(buildPlan());
+  document.getElementById('plan').scrollIntoView({behavior:'smooth', block:'start'});
+};
+document.getElementById('btnClear').onclick=function(){ picked=[]; savePicked(); planSlots=[]; document.getElementById('timeline').innerHTML=''; document.getElementById('budget').innerHTML=''; document.getElementById('planWarn').innerHTML=''; refresh(); };
+document.getElementById('btnAll').onclick=function(){ picked=CITIES.map(function(c){return c.id;}); savePicked(); refresh(); regen(); };
 document.getElementById('btnCopy').onclick=copyText;
+document.getElementById('btnPrint').onclick=function(){ window.print(); };
+document.getElementById('btnXhs').onclick=function(){ openSearch('xhs'); };
+document.getElementById('btnDp').onclick=function(){ openSearch('dp'); };
+document.getElementById('btnGd').onclick=function(){ openSearch('gd'); };
+refresh();
 </script>
 </body>
 </html>
