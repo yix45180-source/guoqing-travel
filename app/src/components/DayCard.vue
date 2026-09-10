@@ -3,27 +3,27 @@
            @dragstart="onDragStart" @dragend="dragging = false"
            @dragover.prevent @drop.prevent="onDrop">
     <div class="when-row">
-      <div class="when">{{ date.d }} {{ date.w }} · 第 {{ i + 1 }} 天</div>
+      <div class="when"><van-icon :name="I.calendar" />{{ date.d }} {{ date.w }} · 第 {{ i + 1 }} 天</div>
       <div class="mv">
-        <button type="button" title="上移一天" :disabled="i === 0" @click.stop="$emit('move', i, i - 1)">↑</button>
-        <button type="button" title="下移一天" :disabled="i === last" @click.stop="$emit('move', i, i + 1)">↓</button>
+        <button type="button" title="上移一天" :disabled="i === 0" @click.stop="$emit('move', i, i - 1)"><van-icon :name="I.up" /></button>
+        <button type="button" title="下移一天" :disabled="i === last" @click.stop="$emit('move', i, i + 1)"><van-icon :name="I.down" /></button>
       </div>
     </div>
     <h3>{{ slotTitle(s) }}</h3>
     <div class="row">
-      <span class="badge strong">{{ b.time }}</span>
-      <span class="badge strong">单程约 {{ b.price }}</span>
+      <IconBadge :icon="I.clock" variant="strong">{{ b.time }}</IconBadge>
+      <IconBadge :icon="I.money" variant="strong">单程约 {{ b.price }}</IconBadge>
     </div>
-    <div class="slots"><div><b>便宜吃</b> {{ (b.foods || []).join('、') }}</div></div>
+    <div class="slots"><div><b><van-icon :name="I.food" />便宜吃</b> {{ (b.foods || []).join('、') }}</div></div>
     <div v-if="b.tl" class="tl">
       <div v-for="(t, ti) in b.tl" :key="ti" class="tl-row"><span class="tl-t">{{ t[0] }}</span><span>{{ t[1] }}</span></div>
     </div>
     <div v-else class="slots">
-      <div><b>上午</b> {{ b.am }}</div>
-      <div><b>下午</b> {{ b.pm }}</div>
-      <div><b>傍晚</b> {{ b.eve }}</div>
+      <div><b><van-icon :name="I.clock" />上午</b> {{ b.am }}</div>
+      <div><b><van-icon :name="I.clock" />下午</b> {{ b.pm }}</div>
+      <div><b><van-icon :name="I.clock" />傍晚</b> {{ b.eve }}</div>
     </div>
-    <div v-if="b.booking" class="note">{{ b.booking }}</div>
+    <div v-if="b.booking" class="note"><van-icon :name="I.tip" /><span>{{ b.booking }}</span></div>
     <SearchLinks :q="q" />
   </article>
 </template>
@@ -31,6 +31,8 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { state, slotTitle, slotBody, dateAt, cityById } from '../store.js'
+import { I } from '../icons.js'
+import IconBadge from './IconBadge.vue'
 import SearchLinks from './SearchLinks.vue'
 
 const props = defineProps({ s: { type: Object, required: true }, i: { type: Number, required: true }, last: { type: Number, required: true } })

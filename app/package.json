@@ -6,11 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:smoke": "node smoke-test.mjs",
+    "test:responsive": "node responsive-test.mjs",
+    "test": "node smoke-test.mjs && node responsive-test.mjs"
   },
   "dependencies": {
+    "echarts": "^6.1.0",
     "vant": "^4.9.0",
-    "vue": "^3.4.0"
+    "vue": "^3.4.0",
+    "vue-echarts": "^8.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",

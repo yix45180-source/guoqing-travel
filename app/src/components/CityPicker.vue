@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="city-picker">
     <div class="search-box">
       <label>去网页搜好吃的（打开小红书 / 点评 / 高德）</label>
       <div class="search-row">
@@ -53,11 +53,11 @@
         </div>
       </div>
       <div class="actions">
-        <van-button type="primary" size="small" @click="doPlan">生成行程</van-button>
-        <van-button size="small" @click="copyText">复制文字版</van-button>
-        <van-button size="small" @click="printPage">打印</van-button>
-        <van-button size="small" @click="doClear">清空</van-button>
-        <van-button size="small" @click="selectAll">全选</van-button>
+        <van-button type="primary" size="small" :icon="I.route" @click="doPlan">生成行程</van-button>
+        <van-button size="small" :icon="I.copy" @click="copyText">复制文字版</van-button>
+        <van-button size="small" :icon="I.print" @click="printPage">打印</van-button>
+        <van-button size="small" :icon="I.delete" @click="doClear">清空</van-button>
+        <van-button size="small" :icon="I.success" @click="selectAll">全选</van-button>
       </div>
     </div>
 
@@ -72,6 +72,7 @@
 import { ref } from 'vue'
 import { showToast } from 'vant'
 import CityCard from './CityCard.vue'
+import { I } from '../icons.js'
 import {
   state, days, summaryTxt, holidayChips, filteredCities, cityById,
   toggleCity, setHoliday, setStartDate, setMode, setDays, setStu, setPeak,

@@ -176,6 +176,36 @@ export function budgetCalc() {
   return { fare, ticket, days: d, foodLo: 40 * d, foodHi: 80 * d, trLo: 10 * d, trHi: 20 * d }
 }
 
+// 按行程日（slot）拆分花费：高铁/门票/吃饭(中值)/市内(中值)
+// 用于"按城市"饼图与表格细化
+export function budgetBySlot() {
+  const slots = state.planSlots
+  const foodMid = 60 // (40+80)/2
+  const trMid = 15 // (10+20)/2
+  return slots.map((s, i) => {
+    let fare = 0, ticket = 0
+    let key, name, emoji
+    if (s.type === 'city') {
+      fare = (FARE[s.id] || 0) * 2
+      const t = TICKET[s.id] || [0, 0]
+      ticket = state.stu ? t[1] : t[0]
+      const c = cityById(s.id)
+      key = 'city-' + s.id + (s.pass === 2 ? '-p2' : '')
+      name = (c ? c.name : s.id) + (s.pass === 2 ? '·补一天' : '')
+      emoji = c ? c.emoji : '📍'
+    } else {
+      const tt = s.theme.ticket || [0, 0]
+      ticket = state.stu ? tt[1] : tt[0]
+      key = 'theme-' + s.theme.id + '-' + i
+      name = '杭州·' + s.theme.name.replace(/^杭州\s*[·]?/, '')
+      emoji = s.theme.emoji || '🏡'
+    }
+    const food = foodMid
+    const tr = s.type === 'city' ? trMid : trMid * 0.6 // 杭州本地交通略低
+    return { idx: i, key, name, emoji, fare, ticket, food, tr, total: fare + ticket + food + tr }
+  })
+}
+
 const savePicked = () => saveJSON('tripPicked', state.picked)
 const saveRes = () => saveJSON('reservationPicked', state.reservationPicked)
 const saveState = () => saveJSON('tripState', { start: state.tripStart, fillDays: state.fillDays, hol: state.curHol, stu: state.stu })
@@ -318,6 +348,63 @@ export const eatItems = computed(() => {
 })
 
 export const budget = computed(() => budgetCalc())
+
+// 按行程日拆分（饼图用）
+export const budgetSlots = computed(() => budgetBySlot())
+
+// 按类别拆分饼图数据（取中值作为代表值）
+export const budgetByCategory = computed(() => {
+  const b = budget.value
+  const foodMid = Math.round((b.foodLo + b.foodHi) / 2)
+  const trMid = Math.round((b.trLo + b.trHi) / 2)
+  return [
+    { name: '高铁往返', value: b.fare, color: '#c8542f' },
+    { name: '景点门票', value: b.ticket, color: '#2f6f5e' },
+    { name: '吃饭', value: foodMid, color: '#b8860b' },
+    { name: '市内交通', value: trMid, color: '#3d6a8f' },
+  ].filter(x => x.value > 0)
+})
+
+// 按城市聚合（同一城市多日合并）
+export const budgetByCity = computed(() => {
+  const map = new Map()
+  for (const s of budgetBySlot()) {
+    const key = s.name.replace(/·补一天$/, '')
+    const cur = map.get(key) || { name: key, emoji: s.emoji, fare: 0, ticket: 0, food: 0, tr: 0, total: 0 }
+    cur.fare += s.fare; cur.ticket += s.ticket; cur.food += s.food; cur.tr += s.tr; cur.total += s.total
+    map.set(key, cur)
+  }
+  return Array.from(map.values()).sort((a, b) => b.total - a.total)
+})
+
+// 仪表盘 KPI
+export const dashboard = computed(() => {
+  const b = budget.value
+  const totalLo = b.fare + b.ticket + b.foodLo + b.trLo
+  const totalHi = b.fare + b.ticket + b.foodHi + b.trHi
+  const totalMid = Math.round((totalLo + totalHi) / 2)
+  const nonHz = state.picked.filter(id => id !== 'hz').length
+  const avgPerDay = b.days > 0 ? Math.round(totalMid / b.days) : 0
+  const cityCount = state.picked.length
+  const reservedCount = state.reservationPicked.length
+  return {
+    days: b.days,
+    cityCount,
+    nonHzCount: nonHz,
+    fare: b.fare,
+    ticket: b.ticket,
+    foodLo: b.foodLo,
+    foodHi: b.foodHi,
+    trLo: b.trLo,
+    trHi: b.trHi,
+    totalLo,
+    totalHi,
+    totalMid,
+    avgPerDay,
+    reservedCount,
+    leftoverCount: state.leftover.length,
+  }
+})
 
 export const leftoverNames = computed(() => {
   const names = [], seen = {}
