@@ -12,16 +12,15 @@
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;background-color:#eee9dd;background-image:linear-gradient(rgba(246,243,235,.68),rgba(246,243,235,.78)),url('assets/holiday-table.jpg');background-size:cover;background-position:center top;background-attachment:fixed;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
+  body{margin:0;background:#f3eee1;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
   a{color:var(--brand2)}
   .wrap{max-width:1040px;margin:0 auto;padding:16px 16px 96px}
-  header.hero{background:linear-gradient(135deg,#2f6f5e,#3f8a72 55%,#c8542f);color:#fff;border-radius:18px;padding:22px 20px;margin-bottom:12px}
-  header.hero h1{margin:0 0 8px;font-size:22px}
-  header.hero p{margin:3px 0;font-size:13px;opacity:.95}
-  .chips{margin-top:10px}
-  .chip{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;margin:3px 4px 0 0}
-  nav.toc{position:sticky;top:0;z-index:8;display:flex;gap:8px;flex-wrap:wrap;background:rgba(245,243,238,.92);backdrop-filter:blur(8px);padding:8px 0 12px}
-  nav.toc a{text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--ink)}
+  nav.toc{position:sticky;top:0;z-index:8;display:flex;gap:8px;flex-wrap:wrap;background:rgba(246,242,231,.95);backdrop-filter:blur(10px);padding:10px 0;margin-bottom:14px}
+  nav.toc a{text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:13.5px;font-weight:600;color:var(--ink)}
+  nav.toc a.on{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 6px 14px rgba(200,84,47,.22)}
+  .tabsec{display:none}
+  .tabsec.active{display:block;animation:tabin .22s ease}
+  @keyframes tabin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
   .search-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow)}
   .search-box label{font-size:13px;font-weight:600;display:block;margin-bottom:6px}
   .search-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -118,25 +117,25 @@
   .route-line{color:var(--brand2);font-weight:600;font-size:13px;margin-bottom:6px}
   .route-step{display:flex;gap:8px;font-size:13px;margin:4px 0}
   .route-step strong{color:#9a6412;white-space:nowrap}
-  .hero-cover{position:relative;min-height:570px;display:flex;align-items:stretch;overflow:hidden;background:linear-gradient(90deg,rgba(255,253,247,.86) 0%,rgba(255,253,247,.58) 42%,rgba(255,253,247,.08) 100%),url('assets/holiday-table.jpg') center right/cover;border:1px solid rgba(107,74,47,.12);box-shadow:0 18px 45px rgba(74,56,35,.16);padding:32px;margin-bottom:18px}
-  .hero-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:min(47%,480px);padding:20px 0 24px;background:rgba(255,253,247,.2);border-radius:14px}
+  .hero-cover{position:relative;min-height:430px;display:flex;align-items:center;overflow:hidden;background:radial-gradient(640px 420px at 90% 8%,rgba(200,84,47,.13),transparent 62%),radial-gradient(520px 400px at 4% 96%,rgba(184,134,11,.12),transparent 60%),linear-gradient(120deg,#fdfaf3 0%,#f8f0e0 58%,#f0e4ca 100%);border:1px solid rgba(107,74,47,.14);box-shadow:0 18px 45px rgba(74,56,35,.14);padding:34px 32px 30px;margin-bottom:14px}
+  .hero-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:min(46%,470px);padding:6px 0}
   .hero-kicker{color:#a15a2b;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-  .hero-cover h1{margin:10px 0 12px;color:#3b281d;font-family:Georgia,"STKaiti","KaiTi",serif;font-size:clamp(30px,5vw,62px);line-height:1.03;letter-spacing:0}
+  .hero-cover h1{margin:8px 0 10px;color:#3b281d;font-family:Georgia,"STKaiti","KaiTi",serif;font-size:clamp(28px,4vw,44px);line-height:1.08;letter-spacing:0}
   .hero-copy p{max-width:420px;color:#644f40;font-size:15px;line-height:1.8;margin:0}
   .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
   .hero-btn,.hero-ghost{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 16px;font-size:13px;text-decoration:none;cursor:pointer;border:1px solid rgba(93,59,35,.22)}
   .hero-btn{background:#b85b32;color:#fff;border-color:#b85b32;box-shadow:0 8px 18px rgba(184,91,50,.2)}
   .hero-ghost{background:rgba(255,255,255,.62);color:#533a2b}
   .hero-btn:hover,.hero-ghost:hover{transform:translateY(-1px)}
-  .hero-note{margin-top:28px;padding:10px 13px;border-left:3px solid #c69262;color:#745845;background:rgba(255,252,244,.66);font-size:12px}
+  .hero-note{margin-top:20px;padding:10px 13px;border-left:3px solid #c69262;color:#745845;background:rgba(255,252,244,.75);font-size:12px}
   .hero-map-card{position:absolute;z-index:2;right:26px;bottom:26px;width:min(50%,520px);padding:14px 16px 16px;background:rgba(255,252,244,.78);border:1px solid rgba(108,76,48,.2);border-radius:16px;backdrop-filter:blur(8px);box-shadow:0 12px 30px rgba(69,49,33,.14)}
   .map-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;color:#5f4433}
   .map-card-top strong{font-size:14px}
   .map-status{font-size:11px;color:#9a6b4a;text-align:right}
-  .map-shell{position:relative;min-height:245px;border-radius:12px;overflow:hidden;background:linear-gradient(145deg,#edf4f0,#f7f0df);border:1px solid rgba(80,118,105,.16)}
-  .china-map{display:block;width:100%;height:auto;min-height:245px}
-  .china-outline{fill:#d8e9df;stroke:#5c907b;stroke-width:3;stroke-linejoin:round}
-  .china-island{fill:#d8e9df;stroke:#5c907b;stroke-width:2}
+  .map-shell{position:relative;min-height:230px;border-radius:12px;overflow:hidden;background:linear-gradient(145deg,#f6efdd,#fbf6ea);border:1px solid rgba(140,105,66,.18)}
+  .china-map{display:block;width:100%;height:auto;min-height:230px}
+  .china-outline{fill:#ecdfc3;stroke:#b98d5f;stroke-width:3;stroke-linejoin:round}
+  .china-island{fill:#ecdfc3;stroke:#b98d5f;stroke-width:2}
   .map-route{fill:none;stroke:#c45f36;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:7 7;opacity:.75;transition:d .35s ease}
   .map-pin{cursor:pointer;outline:none}
   .map-pin circle:first-child{fill:#fffaf2;stroke:#ad6948;stroke-width:2;transition:all .2s ease}
@@ -147,11 +146,7 @@
   .map-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;color:#7a624e;font-size:11px}
   .map-legend span{display:inline-flex;align-items:center;gap:4px}
   .map-dot{width:7px;height:7px;border-radius:50%;background:#c45f36;display:inline-block}
-  .map-dot.start{background:#4d8a74}
-  .quick-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 16px;padding:12px 16px;background:#314e46;color:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(49,78,70,.16)}
-  .quick-strip strong{font-size:14px}
-  .quick-strip span{font-size:12px;opacity:.8}
-  .quick-strip a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.5);font-size:12px}
+  .map-dot.start{background:#7a5216}
   .toc a{transition:all .2s ease}
   .toc a:hover{transform:translateY(-1px);border-color:#c78a62;color:#a54f2a}
   .panel,.bar,.search-box,section.city{box-shadow:0 10px 26px rgba(79,61,40,.06)}
@@ -161,20 +156,21 @@
   .btn:hover,.seg:hover,.opt:hover{transform:translateY(-1px);border-color:#c78a62}
   .btn.primary{box-shadow:0 6px 14px rgba(200,84,47,.18)}
   @media (max-width:760px){
-    body{background-image:linear-gradient(rgba(246,243,235,.74),rgba(246,243,235,.84)),url('assets/holiday-table.jpg');background-position:68% top}
-    .hero-cover{min-height:760px;padding:22px 18px;background:linear-gradient(180deg,rgba(255,253,247,.84) 0%,rgba(255,253,247,.48) 48%,rgba(255,253,247,.08) 100%),url('assets/holiday-table.jpg') 68% center/cover}
-    .hero-copy{width:100%;justify-content:flex-start;padding-top:26px}
-    .hero-cover h1{font-size:42px}
-    .hero-map-card{right:14px;bottom:14px;left:14px;width:auto}
-    .map-shell,.china-map{min-height:220px}
+    .hero-cover{min-height:0;padding:26px 18px 22px}
+    .hero-copy{width:100%;justify-content:flex-start;padding-top:0}
+    .hero-cover h1{font-size:34px}
+    .hero-map-card{position:static;width:auto;margin-top:18px}
+    .map-shell,.china-map{min-height:200px}
+    nav.toc a{padding:6px 12px;font-size:12.5px}
   }
   .foot{text-align:center;color:var(--muted);font-size:12px;padding:16px 0 0}
   @media print{
-    nav.toc,.search-box,.actions,.filters,.controls,.c-head,.btn,.mv,header.hero .chips{display:none !important}
+    nav.toc,.search-box,.actions,.filters,.controls,.c-head,.btn,.mv{display:none !important}
+    .tabsec{display:block !important}
     .city{display:none} .city.picked{display:block}
     body{background:#fff}
   }
-  @media (max-width:560px){ header.hero h1{font-size:19px} .hero-cover h1{font-size:40px} }
+  @media (max-width:560px){ .hero-cover h1{font-size:30px} }
 </style>
 </head>
 <body>
@@ -221,8 +217,7 @@
     <a href="#memo">出行备忘</a>
   </nav>
 
-  <div class="quick-strip"><div><strong>华东当天往返小环线</strong><span> 从余杭出发，选城市、圈预约、再生成路线</span></div><a href="#reserve">先看预约景点 →</a></div>
-
+  <section class="tabsec active" id="pick">
   <div class="search-box">
     <label>去网页搜好吃的（打开小红书 / 点评 / 高德）</label>
     <div class="search-row">
@@ -234,7 +229,7 @@
     <p class="empty" style="margin:8px 0 0">站内是整理过的平价店，实时排队和口味以小红书、点评为准，本页不抓取笔记。</p>
   </div>
 
-  <div class="bar" id="pick">
+  <div class="bar">
     <h2>已选城市（点标签可取消）</h2>
     <div class="sel-list" id="selList"><span class="empty">还没选，点下面卡片试试 →</span></div>
     <div class="summary" id="summary"></div>
@@ -277,8 +272,9 @@
 
   <div class="filters" id="cityFilters"></div>
   <div id="list"></div>
+  </section>
 
-  <section class="reserve-panel" id="reserve">
+  <section class="reserve-panel tabsec" id="reserve">
     <h2>预约景点清单</h2>
     <p class="empty">把想去的预约景点圈出来，系统会按当地游览顺序生成路线；选中预约景点时会自动加入对应城市。</p>
     <div class="reserve-toolbar">
@@ -289,7 +285,7 @@
     <div class="route-result" id="reserveRoute"></div>
   </section>
 
-  <section class="panel" id="plan">
+  <section class="panel tabsec" id="plan">
     <h2>行程时间轴</h2>
     <p class="empty">选城后点「生成行程」。每张卡片是从出门到回家的完整时间表（含每个景点建议时长、高铁班次衔接）；卡片可拖拽或点 ↑↓ 调顺序。</p>
     <div id="budget"></div>
@@ -297,7 +293,7 @@
     <div id="planWarn"></div>
   </section>
 
-  <section class="panel" id="eats">
+  <section class="panel tabsec" id="eats">
     <h2>跨城便宜美食</h2>
     <div class="filters">
       <button class="seg on" data-food="all" type="button">全部</button>
@@ -307,7 +303,7 @@
     <div class="food-card" id="foodBoard"></div>
   </section>
 
-  <section class="panel" id="memo">
+  <section class="panel tabsec" id="memo">
     <h2>出行备忘</h2>
     <h4>12306 预售（提前 15 天含当天，按当前出行日期）</h4>
     <table>
@@ -1344,7 +1340,9 @@ document.querySelectorAll('input[name=mode]').forEach(function(r){
 document.getElementById('peakHz').addEventListener('change', regen);
 document.getElementById('btnPlan').onclick=function(){
   renderPlan(buildPlan());
-  document.getElementById('plan').scrollIntoView({behavior:'smooth', block:'start'});
+  showTab('plan');
+  var tb=document.querySelector('nav.toc');
+  window.scrollTo({top:tb ? tb.offsetTop : 0, behavior:'smooth'});
 };
 document.getElementById('btnReserveRoute').onclick=function(){ renderReservationRoute(); document.getElementById('reserveRoute').scrollIntoView({behavior:'smooth', block:'nearest'}); };
 document.getElementById('btnClear').onclick=function(){ picked=[]; reservationPicked=[]; savePicked(); saveReservations(); planSlots=[]; document.getElementById('timeline').innerHTML=''; document.getElementById('budget').innerHTML=''; document.getElementById('planWarn').innerHTML=''; document.getElementById('reserveRoute').innerHTML=''; refresh(); };
@@ -1359,8 +1357,31 @@ document.querySelectorAll('[data-map-city]').forEach(function(pin){
   pin.addEventListener('click', choose);
   pin.addEventListener('keydown', function(e){ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); choose(); } });
 });
+var TAB_IDS=['pick','reserve','plan','eats','memo'];
+function showTab(id){
+  if(TAB_IDS.indexOf(id)<0) id='pick';
+  var secs=document.querySelectorAll('.tabsec');
+  for(var i=0;i<secs.length;i++) secs[i].classList.toggle('active', secs[i].id===id);
+  var links=document.querySelectorAll('nav.toc a');
+  for(var j=0;j<links.length;j++) links[j].classList.toggle('on', links[j].getAttribute('href')==='#'+id);
+  if(history.replaceState) history.replaceState(null,'','#'+id);
+}
+document.addEventListener('click', function(e){
+  var a=e.target.closest('a[href^="#"]');
+  if(!a) return;
+  var id=a.getAttribute('href').slice(1);
+  if(TAB_IDS.indexOf(id)<0) return;
+  e.preventDefault();
+  showTab(id);
+  var tb=document.querySelector('nav.toc');
+  window.scrollTo({top:tb ? tb.offsetTop : 0, behavior:'smooth'});
+});
+window.addEventListener('hashchange', function(){ showTab(location.hash.slice(1)); });
 document.getElementById('startDate').value=tripStart;
 refresh();
+var initTab=location.hash.slice(1);
+showTab(initTab);
+if(TAB_IDS.indexOf(initTab)>=0) window.scrollTo(0, document.querySelector('nav.toc').offsetTop);
 </script>
 </body>
 </html>
