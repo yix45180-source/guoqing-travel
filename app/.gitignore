@@ -1,1 +1,16 @@
 node_modules/
+# 敏感配置 / 凭据
+.env
+.env.*
+!.env.example
+*.local
+*.key
+*.pem
+credentials.json
+secret*.json
+# 系统文件
+.DS_Store
+Thumbs.db
+# 编辑器
+.vscode/
+.idea/
