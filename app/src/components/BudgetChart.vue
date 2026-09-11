@@ -51,12 +51,13 @@ function resizeChart() {
   })
 }
 // 首次进入 plan tab 后才渲染 v-chart，避免容器尺寸为 0 时的 echarts 初始化警告
+// immediate: 组件常在「生成行程」的同一 tick 内才挂载（activeTab 已是 plan），不带 immediate 时 watch 永不触发
 watch(() => state.activeTab, v => {
   if (v === 'plan') {
     if (!chartReady.value) chartReady.value = true
     resizeChart()
   }
-})
+}, { immediate: true })
 onMounted(() => resizeChart())
 
 const hasData = computed(() =>
