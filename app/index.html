@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>假期出行 · 余杭出发当天往返</title>
+<script>
+  // 内联脚本防闪烁：根据 localStorage + 系统偏好提前打 data-theme
+  (function(){
+    try {
+      var t = localStorage.getItem('tripTheme') || 'auto'
+      var dark = t === 'dark' || (t === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+    } catch(e) {}
+  })()
+</script>
 </head>
 <body>
 <div id="app"></div>

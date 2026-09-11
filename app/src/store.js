@@ -30,6 +30,8 @@ export const state = reactive({
   activeTab: 'pick',
   showReserveRoute: false,
   reserveDirty: false,
+  // 'auto' | 'light' | 'dark' — 主题切换；与 data-theme 属性联动，覆盖 prefers-color-scheme
+  theme: loadJSON('tripTheme', 'auto'),
 })
 
 export const TABS = [
@@ -67,7 +69,7 @@ export const gd = (q) => 'https://ditu.amap.com/search?query=' + encodeURICompon
 
 export const days = computed(() => state.mode === 'fill' ? state.fillDays : state.dayCount)
 
-function autoDayCount() {
+export function autoDayCount() {
   if (!state.dayAuto) return
   const k = state.picked.filter(id => id !== 'hz').length
   state.dayCount = Math.min(7, Math.max(1, k))
@@ -209,6 +211,35 @@ export function budgetBySlot() {
 const savePicked = () => saveJSON('tripPicked', state.picked)
 const saveRes = () => saveJSON('reservationPicked', state.reservationPicked)
 const saveState = () => saveJSON('tripState', { start: state.tripStart, fillDays: state.fillDays, hol: state.curHol, stu: state.stu })
+
+function effectiveTheme(v) {
+  if (v === 'dark' || v === 'light') return v
+  // auto：跟随系统
+  try {
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
+  } catch (e) {}
+  return 'light'
+}
+
+export function applyTheme() {
+  try {
+    if (typeof document === 'undefined') return
+    document.documentElement.setAttribute('data-theme', effectiveTheme(state.theme))
+  } catch (e) {}
+}
+
+export function setTheme(v) {
+  state.theme = v === 'dark' || v === 'light' ? v : 'auto'
+  saveJSON('tripTheme', state.theme)
+  applyTheme()
+}
+
+// 系统主题切换时，如果是 auto 模式要跟随更新
+if (typeof window !== 'undefined' && window.matchMedia) {
+  try {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.theme === 'auto') applyTheme() })
+  } catch (e) {}
+}
 
 export function toggleCity(id) {
   const i = state.picked.indexOf(id)

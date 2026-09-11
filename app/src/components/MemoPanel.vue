@@ -1,6 +1,25 @@
 <template>
   <section class="panel">
     <h2><van-icon :name="I.tip" />出行备忘</h2>
+
+    <div class="countdown-card" v-if="sale">
+      <div class="countdown-emoji">⏰</div>
+      <div class="countdown-body">
+        <p class="countdown-title">下一个开售日：{{ saleLabel }}（{{ sale.note }}）</p>
+        <div class="countdown-time">
+          <span>{{ d }}</span><span class="unit">天</span>
+          <span>{{ hh }}</span><span class="unit">:</span>
+          <span>{{ mm }}</span><span class="unit">:</span>
+          <span>{{ ss }}</span>
+        </div>
+        <p class="countdown-sub">12306 早 8:30 开售，提前 15 天含当天。关掉本页面提醒会失效，建议用「导出抢票提醒」生成日历事件。</p>
+      </div>
+      <div class="countdown-actions">
+        <van-button size="small" type="primary" :icon="I.warn" @click="notifySale">开售前提醒我</van-button>
+        <van-button size="small" plain type="primary" :icon="I.calendar" @click="exportSale">导出发送提醒</van-button>
+      </div>
+    </div>
+
     <h4><van-icon :name="I.calendar" />12306 预售（提前 15 天含当天，按当前出行日期）</h4>
     <table>
       <thead><tr><th>乘车日</th><th>开售日</th><th>备注</th></tr></thead>
@@ -35,6 +54,64 @@
 </template>
 
 <script setup>
-import { saleRows } from '../store.js'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { saleRows, days, state } from '../store.js'
+import { saleCountdown, buildSaleIcs, downloadIcs } from '../share.js'
 import { I } from '../icons.js'
+import { showToast } from 'vant'
+
+const tick = ref(Date.now())
+let timer = null
+onMounted(() => { timer = setInterval(() => { tick.value = Date.now() }, 1000) })
+onBeforeUnmount(() => { if (timer) clearInterval(timer) })
+
+const sale = computed(() => { void tick.value; return saleCountdown(state.tripStart, days.value) })
+const saleLabel = computed(() => sale.value ? formatSale(sale.value.saleAt) + ' · ' + sale.value.rideLabel : '')
+
+const d = computed(() => sale.value ? Math.floor(sale.value.diff / 86400000) : 0)
+const hh = computed(() => sale.value ? pad(Math.floor((sale.value.diff % 86400000) / 3600000)) : '00')
+const mm = computed(() => sale.value ? pad(Math.floor((sale.value.diff % 3600000) / 60000)) : '00')
+const ss = computed(() => sale.value ? pad(Math.floor((sale.value.diff % 60000) / 1000)) : '00')
+
+function pad(n) { return n < 10 ? '0' + n : '' + n }
+function formatSale(d) {
+  return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes())
+}
+
+function notifySale() {
+  if (!sale.value) { showToast('所有开售日已过期'); return }
+  if (typeof Notification === 'undefined') { showToast('当前浏览器不支持通知'); return }
+  if (Notification.permission === 'granted') {
+    armNotify()
+    showToast('已开启开售前 10 分钟提醒（页面保持打开）')
+  } else if (Notification.permission === 'denied') {
+    showToast('通知已被禁用，请在浏览器设置里允许')
+  } else {
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') { armNotify(); showToast('已开启开售前 10 分钟提醒') }
+      else showToast('未授权，将无法提醒')
+    })
+  }
+}
+
+let notifyTimer = null
+function armNotify() {
+  if (!sale.value || notifyTimer) return
+  const fireAt = sale.value.saleAt.getTime() - 10 * 60 * 1000
+  const delay = fireAt - Date.now()
+  if (delay <= 0) { showToast('距开售不到 10 分钟，请直接去 12306'); return }
+  notifyTimer = setTimeout(() => {
+    try {
+      new Notification('12306 即将开售', { body: '10 分钟后开售 ' + sale.value.rideLabel + ' 的车票' })
+    } catch (e) {}
+    notifyTimer = null
+  }, delay)
+}
+
+function exportSale() {
+  if (!state.tripStart) { showToast('还没设出发日'); return }
+  const ics = buildSaleIcs(state.tripStart, days.value)
+  downloadIcs('12306-开售提醒.ics', ics)
+  showToast('已生成开售提醒 .ics')
+}
 </script>

@@ -8,6 +8,10 @@
         <span v-if="t.id === 'reserve' && state.reservationPicked.length" class="cnt">{{ state.reservationPicked.length }}</span>
         <span v-if="t.id === 'plan' && state.planSlots.length" class="cnt">{{ state.planSlots.length }}</span>
       </button>
+      <button class="theme-toggle" type="button" :title="themeTitle" @click="cycleTheme" aria-label="切换主题">
+        <span class="ic">{{ themeIcon }}</span>
+        <span class="lbl">{{ themeLabel }}</span>
+      </button>
     </nav>
     <CityPicker v-show="state.activeTab === 'pick'" class="tabpane" />
     <ReservePanel v-show="state.activeTab === 'reserve'" class="tabpane" />
@@ -20,21 +24,38 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import HeroCover from './components/HeroCover.vue'
 import CityPicker from './components/CityPicker.vue'
 import ReservePanel from './components/ReservePanel.vue'
 import PlanPanel from './components/PlanPanel.vue'
 import EatsPanel from './components/EatsPanel.vue'
 import MemoPanel from './components/MemoPanel.vue'
-import { state, setTab, scrollToTab, TABS } from './store.js'
+import { state, setTab, scrollToTab, TABS, applyTheme, setTheme, autoDayCount, regen } from './store.js'
+import { decodeShare, applyShare } from './share.js'
 
 function goTab(id) {
   setTab(id)
   scrollToTab()
 }
 
+const themeIcon = computed(() => state.theme === 'dark' ? '🌙' : (state.theme === 'light' ? '☀️' : '🌓'))
+const themeLabel = computed(() => state.theme === 'dark' ? '深色' : (state.theme === 'light' ? '浅色' : '自动'))
+const themeTitle = computed(() => state.theme === 'dark' ? '当前深色，点击切换到自动' : (state.theme === 'light' ? '当前浅色，点击切换到深色' : '当前跟随系统，点击切换到浅色'))
+
+function cycleTheme() {
+  // auto → light → dark → auto
+  setTheme(state.theme === 'auto' ? 'light' : state.theme === 'light' ? 'dark' : 'auto')
+}
+
 onMounted(() => {
+  // 优先从 URL ?p=... 还原分享状态（仅在无本地存档时覆盖）
+  const sp = decodeShare(location.search)
+  if (Object.keys(sp).length) {
+    applyShare(state, sp)
+    autoDayCount(); regen()
+  }
+  applyTheme()
   setTab(location.hash.slice(1))
   window.addEventListener('hashchange', () => setTab(location.hash.slice(1)))
 })

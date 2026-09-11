@@ -3,6 +3,15 @@
     <h2>行程时间轴</h2>
     <p class="empty">选城后点「生成行程」。每张卡片是从出门到回家的完整时间表（含每个景点建议时长、高铁班次衔接）；卡片可拖拽或点 ↑↓ 调顺序。</p>
     <template v-if="state.planSlots.length">
+      <div class="theme-card">
+        <h3><van-icon :name="I.share" />分享与导出</h3>
+        <p>把整套方案（已选城市、出发日、学生票、高峰留杭）发给别人，或导入手机日历。</p>
+        <div class="actions">
+          <van-button size="small" plain type="primary" :icon="I.calendar" @click="exportPlanIcs">导出行程 .ics</van-button>
+          <van-button size="small" plain type="primary" :icon="I.warn" @click="exportSaleIcs">导出抢票提醒</van-button>
+          <van-button size="small" plain type="primary" :icon="I.share" @click="copyShareLink">复制分享链接</van-button>
+        </div>
+      </div>
       <div class="plan-grid">
         <aside class="plan-aside">
           <PlanDashboard @copy="copyPlan" />
@@ -42,7 +51,8 @@ import DayCard from './DayCard.vue'
 import PlanDashboard from './PlanDashboard.vue'
 import BudgetChart from './BudgetChart.vue'
 import { I } from '../icons.js'
-import { state, budget, leftoverNames, moveSlot, planText } from '../store.js'
+import { state, budget, leftoverNames, moveSlot, planText, days } from '../store.js'
+import { buildPlanIcs, buildSaleIcs, downloadIcs, copyText, encodeShare } from '../share.js'
 import { showToast } from 'vant'
 
 const totalLo = computed(() => budget.value.fare + budget.value.ticket + budget.value.foodLo + budget.value.trLo)
@@ -56,11 +66,34 @@ function onDrop(i) {
 
 async function copyPlan() {
   const text = planText()
-  try {
-    await navigator.clipboard.writeText(text)
-    showToast('行程已复制到剪贴板')
-  } catch (e) {
-    showToast('复制失败，请手动选择文本')
-  }
+  const ok = await copyText(text)
+  showToast(ok ? '行程已复制到剪贴板' : '复制失败，请手动选择文本')
+}
+
+function fileName(name) {
+  return name + '-' + state.tripStart + '-' + days.value + 'd.ics'
+}
+
+function exportPlanIcs() {
+  if (!state.planSlots.length) { showToast('还没生成行程'); return }
+  const ics = buildPlanIcs(state.planSlots, state.tripStart)
+  downloadIcs(fileName('行程'), ics)
+  showToast('已生成 .ics（手机日历可直接导入）')
+}
+
+function exportSaleIcs() {
+  if (!state.tripStart) { showToast('还没设出发日'); return }
+  const ics = buildSaleIcs(state.tripStart, days.value)
+  downloadIcs('12306-开售提醒.ics', ics)
+  showToast('已生成开售提醒 .ics')
+}
+
+async function copyShareLink() {
+  const qs = encodeShare(state)
+  const base = location.origin + location.pathname
+  const hash = location.hash || '#plan'
+  const url = base + (qs ? '?' + qs : '') + hash
+  const ok = await copyText(url)
+  showToast(ok ? '分享链接已复制' : '复制失败，请手动复制地址栏 URL')
 }
 </script>
